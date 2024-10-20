@@ -5,5 +5,11 @@ RewriteBase /stockopname/
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 
-# Otherwise, redirect to index.php with the random string as a query parameter
+# Otherwise, redirect to index.php with the full request URI as a query parameter
 RewriteRule ^(.*)$ index.php [L,QSA]
+
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+    Header set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+</IfModule>

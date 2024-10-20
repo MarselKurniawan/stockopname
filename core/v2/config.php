@@ -1,6 +1,6 @@
 <?php
 // Konfigurasi dasar
-define('BASE_URL', 'https://localhost');
+define('BASE_URL', '/stockopname/');
 
 // Error reporting
 ini_set('display_errors', 1);
