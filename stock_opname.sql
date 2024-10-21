@@ -2,10 +2,17 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
+<<<<<<< HEAD
 -- Host: localhost
 -- Generation Time: Oct 20, 2024 at 08:13 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
+=======
+-- Host: 127.0.0.1
+-- Generation Time: Oct 21, 2024 at 01:53 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
+>>>>>>> 4916839 (feat: stock retur)
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -63,9 +70,15 @@ CREATE TABLE `kota` (
 --
 
 INSERT INTO `kota` (`id`, `nama_kota`, `created_at`) VALUES
+<<<<<<< HEAD
 (1, 'Kota A', '2024-10-20 07:06:44'),
 (2, 'Kota B', '2024-10-20 07:06:44'),
 (3, 'Kota C', '2024-10-20 07:06:44');
+=======
+(1, 'Semarang', '2024-10-20 07:06:44'),
+(2, 'Surabaya', '2024-10-20 07:06:44'),
+(3, 'Lokseumawe', '2024-10-20 07:06:44');
+>>>>>>> 4916839 (feat: stock retur)
 
 -- --------------------------------------------------------
 
@@ -97,6 +110,16 @@ CREATE TABLE `produk` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+<<<<<<< HEAD
+=======
+--
+-- Dumping data for table `produk`
+--
+
+INSERT INTO `produk` (`id`, `nama_produk`, `jenis_produk`, `harga`, `created_at`) VALUES
+(1, 'Kue Bintang', 'Roti Kering', 12000.00, '2024-10-21 07:22:00');
+
+>>>>>>> 4916839 (feat: stock retur)
 -- --------------------------------------------------------
 
 --
@@ -124,6 +147,13 @@ CREATE TABLE `stok` (
   `toko_id` int(11) DEFAULT NULL,
   `produk_id` int(11) DEFAULT NULL,
   `jumlah_stok` int(11) DEFAULT NULL,
+<<<<<<< HEAD
+=======
+  `harga_beli` decimal(10,2) DEFAULT NULL,
+  `harga_jual` decimal(10,2) DEFAULT NULL,
+  `tanggal_masuk` date DEFAULT NULL,
+  `tanggal_kadaluarsa` date DEFAULT NULL,
+>>>>>>> 4916839 (feat: stock retur)
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -131,9 +161,15 @@ CREATE TABLE `stok` (
 -- Dumping data for table `stok`
 --
 
+<<<<<<< HEAD
 INSERT INTO `stok` (`id`, `toko_id`, `produk_id`, `jumlah_stok`, `created_at`) VALUES
 (1, 1, 1, 100, '2024-10-20 07:06:45'),
 (2, 2, 2, 50, '2024-10-20 07:06:45');
+=======
+INSERT INTO `stok` (`id`, `toko_id`, `produk_id`, `jumlah_stok`, `harga_beli`, `harga_jual`, `tanggal_masuk`, `tanggal_kadaluarsa`, `created_at`) VALUES
+(1, 1, 1, 100, 10000.00, 12500.00, '2024-10-01', '2024-10-23', '2024-10-20 07:06:45'),
+(2, 2, 2, 50, NULL, NULL, NULL, NULL, '2024-10-20 07:06:45');
+>>>>>>> 4916839 (feat: stock retur)
 
 -- --------------------------------------------------------
 
@@ -264,7 +300,11 @@ ALTER TABLE `penitipan_nota`
 -- AUTO_INCREMENT for table `produk`
 --
 ALTER TABLE `produk`
+<<<<<<< HEAD
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+=======
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+>>>>>>> 4916839 (feat: stock retur)
 
 --
 -- AUTO_INCREMENT for table `retur`

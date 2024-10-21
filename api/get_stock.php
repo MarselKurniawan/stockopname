@@ -1,66 +1,61 @@
 <?php
-// Menangani preflight request (OPTIONS)
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-    header("Access-Control-Allow-Origin: *");
-    header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-    header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
-    http_response_code(200);
-    exit;
-}
-// Error reporting
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+session_start(); // Pastikan sesi dimulai
 
+header('Content-Type: application/json');
 require_once '../core/func/csrf_protection.php';
 require_once '../core/v2/database.php';
 require_once '../core/v2/config.php';
 
 // Periksa CSRF token
-if (!isset($_GET['csrf_token']) || !validate_csrf_token($_GET['csrf_token'])) {
+if (!isset($_GET['csrf_token']) || !verify_csrf_token($_GET['csrf_token'])) {
     echo json_encode(['status' => 'error', 'message' => 'Invalid CSRF token']);
     exit;
 }
 
-// Validasi toko_id
-if (!isset($_GET['toko_id']) || !is_numeric($_GET['toko_id'])) {
-    echo json_encode(['status' => 'error', 'message' => 'Invalid toko_id']);
-    exit;
-}
-
-$toko_id = (int) $_GET['toko_id'];
-
 // Koneksi database
-$conn = connect_db();
+$conn = db_connect();
 if ($conn->connect_error) {
     echo json_encode(['status' => 'error', 'message' => 'Database connection failed: ' . $conn->connect_error]);
     exit;
 }
 
-$stmt = $conn->prepare("SELECT stok.*, produk.nama_produk FROM stok JOIN produk ON stok.produk_id = produk.id WHERE toko_id = ?");
+// Query untuk mengambil data stok
+$stmt = $conn->prepare("SELECT stok.*, produk.nama_produk, toko.nama_toko, kota.nama_kota 
+    FROM stok 
+    JOIN produk ON stok.produk_id = produk.id 
+    JOIN toko ON stok.toko_id = toko.id 
+    JOIN kota ON toko.kota_id = kota.id;");
 if (!$stmt) {
     echo json_encode(['status' => 'error', 'message' => 'Query preparation failed: ' . $conn->error]);
     exit;
 }
 
-$stmt->bind_param('i', $toko_id);
+// Eksekusi query
 if (!$stmt->execute()) {
     echo json_encode(['status' => 'error', 'message' => 'Query execution failed: ' . $stmt->error]);
     exit;
 }
 
+// Mendapatkan hasil
 $result = $stmt->get_result();
+if (!$result) {
+    echo json_encode(['status' => 'error', 'message' => 'Fetching result failed: ' . $stmt->error]);
+    exit;
+}
+
+// Memproses hasil
 $stok = [];
 while ($row = $result->fetch_assoc()) {
     $stok[] = $row;
 }
 
+// Mengembalikan hasil dalam format JSON
 if (!empty($stok)) {
     echo json_encode(['status' => 'success', 'data' => $stok]);
 } else {
-    echo json_encode(['status' => 'success', 'data' => [], 'message' => 'No stock found for this store.']);
+    echo json_encode(['status' => 'success', 'data' => [], 'message' => 'No stock found.']);
 }
 
+// Menutup statement dan koneksi
 $stmt->close();
 $conn->close();
-?>

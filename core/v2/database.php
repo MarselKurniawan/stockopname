@@ -3,7 +3,7 @@ function db_connect() {
     $host = 'localhost';
     $user = 'root';
     $pass = '';
-    $db_name = 'stockopname';
+    $db_name = 'stock_opname';
 
     $mysqli = new mysqli($host, $user, $pass, $db_name);
 

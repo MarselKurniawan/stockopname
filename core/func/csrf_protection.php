@@ -1,5 +1,6 @@
 <?php
-// security.php
+
+
 
 function generate_csrf_token() {
     if (empty($_SESSION['csrf_token'])) {
@@ -8,9 +9,12 @@ function generate_csrf_token() {
     return $_SESSION['csrf_token'];
 }
 
-function verify_csrf_token($token) {
-    if (!isset($_SESSION['csrf_token']) || $_SESSION['csrf_token'] !== $token) {
-        throw new Exception('Invalid CSRF token');
+function verify_csrf_token($token)
+{
+    if (!isset($_SESSION['csrf_token'])) {
+        throw new Exception("CSRF token not set in session");
     }
+    return hash_equals($_SESSION['csrf_token'], $token); // Bandingkan token dengan yang ada di session
 }
+
 ?>
