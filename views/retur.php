@@ -25,21 +25,24 @@ include_once 'interface/header.php';
           <div class="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-b border-gray-200">
             <div>
               <h2 class="text-xl font-semibold text-gray-800">
-                Stok
+                Retur
               </h2>
               <p class="text-sm text-gray-600">
-                Add stock, edit and more.
+                Add Retur, edit and more.
               </p>
             </div>
 
             <div>
               <div class="inline-flex gap-x-2">
+                <a class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-gray-50" href="#">
+                  View all
+                </a>
                 <a class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none" href="#">
                   <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M5 12h14" />
                     <path d="M12 5v14" />
                   </svg>
-                  Add Stock
+                  Add user
                 </a>
               </div>
             </div>
@@ -101,28 +104,14 @@ include_once 'interface/header.php';
                 <th scope="col" class="px-6 py-3 text-start">
                   <div class="flex items-center gap-x-2">
                     <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      Stok
-                    </span>
-                  </div>
-                </th>
-                 <th scope="col" class="px-6 py-3 text-start">
-                  <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      Laku
-                    </span>
-                  </div>
-                </th>
-                 <th scope="col" class="px-6 py-3 text-start">
-                  <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      Laku *nominal
+                      Tanggal Kadaluarsa
                     </span>
                   </div>
                 </th>
                 <th scope="col" class="px-6 py-3 text-start">
                   <div class="flex items-center gap-x-2">
                     <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      
+                      Stok
                     </span>
                   </div>
                 </th>
@@ -184,7 +173,7 @@ include_once 'interface/header.php';
       return;
     }
 
-    fetch(`https://localhost/stockopname/api/get_stock.php?csrf_token=${csrfToken}`, {
+    fetch(`https://localhost/stockopname/api/get_retur.php?csrf_token=${csrfToken}`, {
         method: 'GET'
       })
       .then(response => {
@@ -206,11 +195,6 @@ include_once 'interface/header.php';
             currency: 'IDR'
           }).format(item.harga_jual);
 
-          let nominalLakuFormatted = new Intl.NumberFormat('id-ID',{
-            style: 'currency',
-            currency: 'IDR'
-          }).format(item.laku_nominal);
-
           // Memformat tanggal ke format tanggal bulan tahun
           let tanggalMasukFormatted = new Date(item.tanggal_masuk).toLocaleDateString('id-ID', {
             day: 'numeric',
@@ -226,15 +210,15 @@ include_once 'interface/header.php';
           // Membuat baris tabel dengan data yang diformat
           let row = `
                 <tr>
-                    <td class="p-6 text-sm">${item.nama_kota}</td>
                     <td class="p-6 text-sm">${item.nama_toko}</td>
                     <td class="p-6 text-sm">${item.nama_produk}</td>
+                    <td class="p-6 text-sm">${item.nama_customer}</td>
+                    <td class="p-6 text-sm">${item.jumlah_retur}</td>
                     <td class="p-6 text-sm">${hargaBeliFormatted}</td>
                     <td class="p-6 text-sm">${hargaJualFormatted}</td>
                     <td class="p-6 text-sm">${tanggalMasukFormatted}</td>
-                    <td class="p-6 text-sm">${item.jumlah_stok}</td>
-                    <td class="p-6 text-sm">${item.laku}</td>
-                    <td class="p-6 text-sm">${nominalLakuFormatted}</td>
+                    <td class="p-6 text-sm">${tanggalKadaluarsaFormatted}</td>
+                    <td>${item.jumlah_stok}</td>
                 </tr>`;
           tableBody.insertAdjacentHTML('beforeend', row); // Menambahkan baris baru ke tabel
         });

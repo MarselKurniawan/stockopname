@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Oct 21, 2024 at 07:23 PM
+-- Generation Time: Oct 24, 2024 at 08:39 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -134,6 +134,7 @@ CREATE TABLE `produk` (
   `nama_produk` varchar(100) NOT NULL,
   `jenis_produk` varchar(100) NOT NULL,
   `harga` decimal(10,2) NOT NULL,
+  `stock` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -141,9 +142,9 @@ CREATE TABLE `produk` (
 -- Dumping data for table `produk`
 --
 
-INSERT INTO `produk` (`id`, `nama_produk`, `jenis_produk`, `harga`, `created_at`) VALUES
-(1, 'Nastar Emas', 'Kue Kering', 12000.00, '2024-10-21 15:34:39'),
-(2, 'Bolu ', 'Kue Basah', 8000.00, '2024-10-21 16:27:27');
+INSERT INTO `produk` (`id`, `nama_produk`, `jenis_produk`, `harga`, `stock`, `created_at`) VALUES
+(1, 'Nastar Emas', 'Kue Kering', 12000.00, 0, '2024-10-21 15:34:39'),
+(2, 'Bolu ', 'Kue Basah', 8000.00, 0, '2024-10-21 16:27:27');
 
 -- --------------------------------------------------------
 
@@ -161,6 +162,13 @@ CREATE TABLE `retur` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `retur`
+--
+
+INSERT INTO `retur` (`id`, `toko_id`, `produk_id`, `jumlah_retur`, `customer_id`, `tanggal_retur`, `created_at`) VALUES
+(2, 1, 2, 10, 2, '2024-10-25', '2024-10-24 17:18:52');
+
 -- --------------------------------------------------------
 
 --
@@ -176,6 +184,8 @@ CREATE TABLE `stok` (
   `harga_jual` decimal(10,2) DEFAULT NULL,
   `tanggal_masuk` date DEFAULT NULL,
   `tanggal_kadaluarsa` date DEFAULT NULL,
+  `laku` int(11) NOT NULL,
+  `laku_nominal` decimal(10,2) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -183,9 +193,9 @@ CREATE TABLE `stok` (
 -- Dumping data for table `stok`
 --
 
-INSERT INTO `stok` (`id`, `toko_id`, `produk_id`, `jumlah_stok`, `harga_beli`, `harga_jual`, `tanggal_masuk`, `tanggal_kadaluarsa`, `created_at`) VALUES
-(1, 1, 1, 100, 15000.00, 17000.00, '2024-10-01', '2024-10-15', '2024-10-20 07:06:45'),
-(2, 2, 2, 50, 13000.00, 15000.00, '2024-10-04', '2024-10-17', '2024-10-20 07:06:45');
+INSERT INTO `stok` (`id`, `toko_id`, `produk_id`, `jumlah_stok`, `harga_beli`, `harga_jual`, `tanggal_masuk`, `tanggal_kadaluarsa`, `laku`, `laku_nominal`, `created_at`) VALUES
+(1, 1, 1, 100, 15000.00, 17000.00, '2024-10-01', '2024-10-15', 56, 1625035.00, '2024-10-20 07:06:45'),
+(2, 2, 2, 50, 13000.00, 15000.00, '2024-10-04', '2024-10-17', 72, 3012036.00, '2024-10-20 07:06:45');
 
 -- --------------------------------------------------------
 
@@ -255,8 +265,8 @@ CREATE TABLE `toko` (
 --
 
 INSERT INTO `toko` (`id`, `nama_toko`, `alamat_toko`, `telepon`, `kota_id`, `created_at`) VALUES
-(1, 'Toko A1', 'Alamat Toko A1', '081234567892', 1, '2024-10-20 07:06:45'),
-(2, 'Toko B1', 'Alamat Toko B1', '081234567893', 2, '2024-10-20 07:06:45');
+(1, 'Gaia Sendangguwo', 'Alamat Toko A1', '081234567892', 1, '2024-10-20 07:06:45'),
+(2, 'Aneka Jaya Sambiroto', 'Alamat Toko B1', '081234567893', 2, '2024-10-20 07:06:45');
 
 -- --------------------------------------------------------
 
@@ -409,7 +419,7 @@ ALTER TABLE `produk`
 -- AUTO_INCREMENT for table `retur`
 --
 ALTER TABLE `retur`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `stok`

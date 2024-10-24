@@ -20,11 +20,7 @@ if ($conn->connect_error) {
 }
 
 // Query untuk mengambil data stok
-$stmt = $conn->prepare("SELECT stok.*, produk.nama_produk, toko.nama_toko, kota.nama_kota 
-    FROM stok 
-    JOIN produk ON stok.produk_id = produk.id 
-    JOIN toko ON stok.toko_id = toko.id 
-    JOIN kota ON toko.kota_id = kota.id;");
+$stmt = $conn->prepare("SELECT retur.*, toko.nama_toko, produk.nama_produk, customer.nama_customer FROM retur JOIN produk ON retur.produk_id = produk.id JOIN toko ON retur.toko_id = toko.id JOIN customer ON retur.customer_id = customer.id; ");
 if (!$stmt) {
     echo json_encode(['status' => 'error', 'message' => 'Query preparation failed: ' . $conn->error]);
     exit;

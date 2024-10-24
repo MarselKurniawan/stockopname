@@ -15,11 +15,15 @@ if (strpos($request, '/api') === 0) {
 
 // Routing ke halaman login atau dashboard
 if ($request == '' || $request == '/login') {
-    require_once 'views/login.php'; // Perbaikan concatenation
+    require_once 'views/login.php'; 
 } elseif ($request == '/dashboard') {
-    require_once 'views/dashboard.php'; // Perbaikan concatenation
+    require_once 'views/dashboard.php'; 
 } elseif ($request == '/stock') {
-    require_once 'views/stok.php'; // Perbaikan concatenation
+    require_once 'views/stok.php'; 
+} elseif ($request == '/retur') {
+    require_once 'views/retur.php'; 
+} elseif ($request == '/produk') {
+    require_once 'views/produk.php'; 
 } else {
     http_response_code(404);
     echo "404 - Page Not Found";
