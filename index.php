@@ -24,6 +24,10 @@ if ($request == '' || $request == '/login') {
     require_once 'views/retur.php'; 
 } elseif ($request == '/produk') {
     require_once 'views/produk.php'; 
+} elseif ($request == '/pabrik') {
+    require_once 'views/pabrik.php';
+} elseif ($request == '/bahan-baku') {
+    require_once 'views/bahanbaku.php';
 } else {
     http_response_code(404);
     echo "404 - Page Not Found";

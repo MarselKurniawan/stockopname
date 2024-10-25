@@ -14,8 +14,58 @@ include_once 'interface/header.php';
 ?>
 <!-- Pastikan ada tempat untuk menyimpan token CSRF -->
 
+<!-- Card Section -->
+<div class="max-w-[85rem] px-4 py-4 sm:px-6 lg:px-8 lg:py-2 mx-auto">
+  <!-- Grid -->
+  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+    <!-- Card -->
+    <div class="flex flex-col bg-white border shadow-sm rounded-xl">
+      <div class="p-4 md:p-5">
+        <div class="flex items-center gap-x-2">
+          <p class="text-xs uppercase font-semibold tracking-wide text-gray-500">
+            Roti yang dihasilkan / <span style="font-size: 10px !important;">hari</span>
+          </p>
+          <div class="hs-tooltip">
+            <div class="hs-tooltip-toggle">
+              <svg class="shrink-0 size-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                <path d="M12 17h.01" />
+              </svg>
+              <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded shadow-sm" role="tooltip">
+                The number of daily users
+              </span>
+            </div>
+          </div>
+
+
+        </div>
+
+        <div class="mt-1 flex items-center gap-x-2">
+
+          <h3 class="text-xl sm:text-2xl font-medium text-gray-800">
+            540
+          </h3>
+          <span class="flex items-center gap-x-1 text-green-600">
+            <svg class="inline-block size-4 self-center" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+              <polyline points="16 7 22 7 22 13" />
+            </svg>
+            <span class="inline-block text-sm">
+              1.7%
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
+    <!-- End Card -->
+  </div>
+  <!-- End Grid -->
+</div>
+<!-- End Card Section -->
+
 <!-- Table Section -->
-<div class="max-w-[85rem] px py-4 sm:px-6 lg:px-8 lg:py-4 mx-auto">
+<div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
   <!-- Card -->
   <div class="flex flex-col">
     <div class="-m-1.5 overflow-x-auto">
@@ -25,21 +75,24 @@ include_once 'interface/header.php';
           <div class="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-b border-gray-200">
             <div>
               <h2 class="text-xl font-semibold text-gray-800">
-                Produk
+                Bahan Baku
               </h2>
               <p class="text-sm text-gray-600">
-                Add, edit and more.
+                Add Bahan Baku, edit and more.
               </p>
             </div>
 
             <div>
               <div class="inline-flex gap-x-2">
+                <a class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-gray-50" href="#">
+                  View all
+                </a>
                 <a class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none" href="#">
                   <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M5 12h14" />
                     <path d="M12 5v14" />
                   </svg>
-                  Add Data
+                  Add Bahan Baku
                 </a>
               </div>
             </div>
@@ -54,7 +107,7 @@ include_once 'interface/header.php';
                 <th scope="col" class="ps-6 lg:ps-3 xl:ps-6 px-6 py-3 text-start">
                   <div class="flex items-center gap-x-2">
                     <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      Nama
+                      Nama Bahan
                     </span>
                   </div>
                 </th>
@@ -62,7 +115,7 @@ include_once 'interface/header.php';
                 <th scope="col" class="px-6 py-3 text-start">
                   <div class="flex items-center gap-x-2">
                     <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      Jenis 
+                      Satuan
                     </span>
                   </div>
                 </th>
@@ -70,7 +123,7 @@ include_once 'interface/header.php';
                 <th scope="col" class="px-6 py-3 text-start">
                   <div class="flex items-center gap-x-2">
                     <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      Stok Barang
+                      Stok Awal 
                     </span>
                   </div>
                 </th>
@@ -78,7 +131,7 @@ include_once 'interface/header.php';
                 <th scope="col" class="px-6 py-3 text-start">
                   <div class="flex items-center gap-x-2">
                     <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      Harga
+                      Stok Akhir
                     </span>
                   </div>
                 </th>
@@ -86,7 +139,7 @@ include_once 'interface/header.php';
                 <th scope="col" class="px-6 py-3 text-start">
                   <div class="flex items-center gap-x-2">
                     <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      
+                      Harga Beli
                     </span>
                   </div>
                 </th>
@@ -148,7 +201,7 @@ include_once 'interface/header.php';
       return;
     }
 
-    fetch(`https://localhost/stockopname/api/get_produk.php?csrf_token=${csrfToken}`, {
+    fetch(`https://localhost/stockopname/api/get_bahan.php?csrf_token=${csrfToken}`, {
         method: 'GET'
       })
       .then(response => {
@@ -161,13 +214,22 @@ include_once 'interface/header.php';
         const tableBody = document.getElementById('stokTable');
         data.data.forEach(item => {
           // Memformat harga menjadi ribuan
-          let hargaFormatted = new Intl.NumberFormat('id-ID', {
+          let hargaBeliFormatted = new Intl.NumberFormat('id-ID', {
             style: 'currency',
             currency: 'IDR'
-          }).format(item.harga);
+          }).format(item.harga_beli);
+          let hargaJualFormatted = new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR'
+          }).format(item.harga_jual);
 
           // Memformat tanggal ke format tanggal bulan tahun
-          let tanggalKeluarFormatted = new Date(item.tanggal_keluar).toLocaleDateString('id-ID', {
+          let tanggalMasukFormatted = new Date(item.tanggal_masuk).toLocaleDateString('id-ID', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+          });
+          let tanggalKadaluarsaFormatted = new Date(item.tanggal_kadaluarsa).toLocaleDateString('id-ID', {
             day: 'numeric',
             month: 'long',
             year: 'numeric'
@@ -176,10 +238,11 @@ include_once 'interface/header.php';
           // Membuat baris tabel dengan data yang diformat
           let row = `
                 <tr>
-                    <td class="p-6 text-sm">${item.nama_produk}</td>
-                    <td class="p-6 text-sm">${item.jenis_produk}</td>
-                    <td class="p-6 text-sm">${item.stock}</td>
-                    <td class="p-6 text-sm">${hargaFormatted}</td>
+                    <td class="p-6 text-sm">${item.nama_bahan}</td>
+                    <td class="p-6 text-sm">${item.satuan}</td>
+                    <td class="p-6 text-sm">${item.stok_awal}</td>
+                    <td class="p-6 text-sm">${item.stok_terakhir}</td>
+                    <td class="p-6 text-sm">${hargaBeliFormatted}</td>
                 </tr>`;
           tableBody.insertAdjacentHTML('beforeend', row); // Menambahkan baris baru ke tabel
         });

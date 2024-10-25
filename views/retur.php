@@ -53,15 +53,6 @@ include_once 'interface/header.php';
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
               <tr>
-
-                <th scope="col" class="ps-6 lg:ps-3 xl:ps-6 px-6 py-3 text-start">
-                  <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      Kota
-                    </span>
-                  </div>
-                </th>
-
                 <th scope="col" class="px-6 py-3 text-start">
                   <div class="flex items-center gap-x-2">
                     <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
@@ -81,37 +72,7 @@ include_once 'interface/header.php';
                 <th scope="col" class="px-6 py-3 text-start">
                   <div class="flex items-center gap-x-2">
                     <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      Harga Beli
-                    </span>
-                  </div>
-                </th>
-
-                <th scope="col" class="px-6 py-3 text-start">
-                  <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      Harga Jual
-                    </span>
-                  </div>
-                </th>
-
-                <th scope="col" class="px-6 py-3 text-start">
-                  <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      Tanggal Masuk
-                    </span>
-                  </div>
-                </th>
-                <th scope="col" class="px-6 py-3 text-start">
-                  <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      Tanggal Kadaluarsa
-                    </span>
-                  </div>
-                </th>
-                <th scope="col" class="px-6 py-3 text-start">
-                  <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      Stok
+                      Jumlah Retur
                     </span>
                   </div>
                 </th>
@@ -213,12 +174,6 @@ include_once 'interface/header.php';
                     <td class="p-6 text-sm">${item.nama_toko}</td>
                     <td class="p-6 text-sm">${item.nama_produk}</td>
                     <td class="p-6 text-sm">${item.nama_customer}</td>
-                    <td class="p-6 text-sm">${item.jumlah_retur}</td>
-                    <td class="p-6 text-sm">${hargaBeliFormatted}</td>
-                    <td class="p-6 text-sm">${hargaJualFormatted}</td>
-                    <td class="p-6 text-sm">${tanggalMasukFormatted}</td>
-                    <td class="p-6 text-sm">${tanggalKadaluarsaFormatted}</td>
-                    <td>${item.jumlah_stok}</td>
                 </tr>`;
           tableBody.insertAdjacentHTML('beforeend', row); // Menambahkan baris baru ke tabel
         });
