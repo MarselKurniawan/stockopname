@@ -4,7 +4,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
   <link rel="stylesheet" href="/stockopname/assets/css/font.css">
   <link rel="stylesheet" href="/stockopname/assets/css/output.css">
 </head>
@@ -117,6 +116,15 @@
                 Produk
               </a>
             </li>
+            <li>
+              <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-700 dark:text-neutral-200 dark:hover:text-neutral-300" href="/stockopname/pabrik">
+                <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                  <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+                Pabrik
+              </a>
+            </li>
 
           </ul>
         </nav>
@@ -125,6 +133,7 @@
     </div>
   </div>
   <!-- End Sidebar -->
+  <script src="node_modules/preline/dist/preline.js"></script>
   <script src="node_modules/preline/dist/preline.js"></script>
   <!-- Content -->
   <div class="w-full pt-10 px-4 sm:px-6 md:px-8 lg:ps-72">

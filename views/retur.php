@@ -173,7 +173,7 @@ include_once 'interface/header.php';
                 <tr>
                     <td class="p-6 text-sm">${item.nama_toko}</td>
                     <td class="p-6 text-sm">${item.nama_produk}</td>
-                    <td class="p-6 text-sm">${item.nama_customer}</td>
+                    <td class="p-6 text-sm">${item.jumlah_retur}</td>
                 </tr>`;
           tableBody.insertAdjacentHTML('beforeend', row); // Menambahkan baris baru ke tabel
         });
