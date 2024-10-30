@@ -8,5 +8,7 @@ module.exports = {
   },
   plugins: [
     require("preline/plugin"), // Plugin Preline
+    require("preline/overlay"), // Plugin Preline
   ],
+  darkMode: "class",
 };

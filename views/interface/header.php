@@ -125,6 +125,9 @@
                 Pabrik
               </a>
             </li>
+            <li>
+
+            </li>
 
           </ul>
         </nav>
@@ -134,7 +137,9 @@
   </div>
   <!-- End Sidebar -->
   <script src="node_modules/preline/dist/preline.js"></script>
-  <script src="node_modules/preline/dist/preline.js"></script>
+  <!-- <script src="node_modules/preline/dist/preline.js"></script> -->
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
   <!-- Content -->
   <div class="w-full pt-10 px-4 sm:px-6 md:px-8 lg:ps-72">
     <!-- your content goes here ... -->
+    
