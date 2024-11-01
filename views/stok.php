@@ -12,21 +12,22 @@ error_log('Token yang dikirim: ' . $_SESSION['csrf_token']);
 
 include_once 'interface/header.php';
 ?>
+
 <!-- Pastikan ada tempat untuk menyimpan token CSRF -->
-<div id="notification" class="fixed top-5 right-5 mt-2 bg-teal-100 border border-teal-200 text-sm text-teal-800 rounded-lg p-4 hidden" role="alert" tabindex="-1" aria-labelledby="hs-soft-color-success-label">
-  <span id="hs-soft-color-success-label" class="font-bold">Success</span> alert! Anda sedang menambah stok.
+<div id="notification" class="fixed top-5 z-[100] right-5 mt-2 bg-teal-100 border border-teal-200 text-sm text-teal-800 rounded-lg p-4 hidden" role="alert" tabindex="-1" aria-labelledby="hs-soft-color-success-label">
+  <span id="hs-soft-color-success-label" class="font-bold">Alert!</span> Anda sedang menambah stok.
 </div>
 
 <!-- Card Section -->
-<div class="max-w-4xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto hidden" id="form-div">
+<div class="max-w-8xl px-2 py-4 sm:px-6 lg:px-8 lg:py-14 mx-auto " id="form-div">
   <!-- Card -->
   <div class="bg-white rounded-xl shadow p-4 sm:p-7">
     <div class="text-center mb-8">
       <h2 class="text-2xl md:text-3xl font-bold text-gray-800">
-        Payment
+        Input Barang 
       </h2>
       <p class="text-sm text-gray-600">
-        Manage your payment methods.
+        
       </p>
     </div>
 
@@ -34,59 +35,46 @@ include_once 'interface/header.php';
       <!-- Section -->
       <div class="py-6 first:pt-0 last:pb-0 border-t first:border-transparent border-gray-200">
         <label for="af-payment-billing-contact" class="inline-block text-sm font-medium">
-          Billing contact
-        </label>
+          Toko
+        </label>  
 
         <div class="mt-2 space-y-3">
-          <input id="af-payment-billing-contact" type="text" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="First Name">
-          <input type="text" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="Last Name">
-          <input type="text" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="Phone Number">
-        </div>
+          <div class="mt-2 space-y-3">
+          
+          <div class="flex flex-col sm:flex-row gap-3">              
+              <select id="citySelect" class="py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
+                  <option selected>Select City</option>
+              </select>
+              
+              <select id="storeSelect" class="py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
+                  <option selected>Select Store</option>
+              </select>
+              <select id="productSelect" class="py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
+                <option selected>Select Produk</option>
+              </select>
+          </div>
+      </div>
+          </div>
       </div>
       <!-- End Section -->
 
       <!-- Section -->
       <div class="py-6 first:pt-0 last:pb-0 border-t first:border-transparent border-gray-200">
         <label for="af-payment-billing-address" class="inline-block text-sm font-medium">
-          Billing address
+          SO Detail
         </label>
 
         <div class="mt-2 space-y-3">
-          <input id="af-payment-billing-address" type="text" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="Street Address">
-          <input type="text" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="Apt, Syuite, Building (Optional)">
           <div class="flex flex-col sm:flex-row gap-3">
-            <input type="text" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="Zip Code">
-            <select class="py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
-            <option selected>City</option>
-              <option>City 1</option>
-              <option>City 2</option>
-              <option>City 3</option>
-            </select>
-            <select class="py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
-            <option selected>State</option>
-              <option>State 1</option>
-              <option>State 2</option>
-              <option>State 3</option>
-            </select>
+            <input type="text" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="Harga Beli">
+            <input type="text" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="Harga Jual">
           </div>
-        </div>
+          <input id="af-payment-billing-address" type="date" class="py-2 px-3 pe-11 block w-80 border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="Tanggal Masuk">
+          <div class="flex flex-col sm:flex-row gap-3">
+            <input type="text" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="Stok">
+            <input type="text" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="Laku">
+          </div>
       </div>
-      <!-- End Section -->
-
-      <!-- Section -->
-      <div class="py-6 first:pt-0 last:pb-0 border-t first:border-transparent border-gray-200">
-        <label for="af-payment-payment-method" class="inline-block text-sm font-medium">
-          Payment method
-        </label>
-
-        <div class="mt-2 space-y-3">
-          <input id="af-payment-payment-method" type="text" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="Name on Card">
-          <input type="text" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="Card Number">
-          <div class="flex flex-col sm:flex-row gap-3">
-            <input type="text" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="Expiration Date">
-            <input type="text" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="CVV Code">
-          </div>
-        </div>
       </div>
       <!-- End Section -->
     </form>
@@ -104,7 +92,7 @@ include_once 'interface/header.php';
 </div>
 <!-- End Card Section -->
 <!-- Table Section -->
-<div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
+<div class="max-w-8xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
   <!-- Card -->
   <div class="flex flex-col">
     <div class="-m-1.5 overflow-x-auto">
@@ -265,6 +253,54 @@ include_once 'interface/header.php';
 
 
 <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Load products when page loads
+    fetch("https://localhost/stockopname/api/products_select.php")
+        .then(response => response.json())
+        .then(data => {
+            let productSelect = document.getElementById("productSelect");
+            data.forEach(product => {
+                let option = document.createElement("option");
+                option.value = product.id;
+                option.text = product.display_name;
+                productSelect.add(option);
+            });
+        });
+    });
+  document.addEventListener("DOMContentLoaded", function () {
+    // Load cities when page loads
+    fetch("https://localhost/stockopname/api/cities_select.php")
+        .then(response => response.json())
+        .then(data => {
+            let citySelect = document.getElementById("citySelect");
+            data.forEach(city => {
+                let option = document.createElement("option");
+                option.value = id;
+                option.text = city.nama_kota;
+                citySelect.add(option);
+            });
+        });
+
+        // Fetch stores based on selected city
+        document.getElementById("citySelect").addEventListener("change", function () {
+            let cityId = this.value;
+            
+            fetch(`https://localhost/stockopname/api/stores_select.php?city_id=${cityId}`)
+                .then(response => response.json())
+                .then(data => {
+                    let storeSelect = document.getElementById("storeSelect");
+                    storeSelect.innerHTML = '<option selected>Select Store</option>';
+                    
+                    data.forEach(store => {
+                        let option = document.createElement("option");
+                        option.value = store.id;
+                        option.text = store.nama_toko;
+                        storeSelect.add(option);
+                    });
+                });
+        });
+    });
+
    document.getElementById("show-form-btn").addEventListener("click", function () {
     // Tampilkan form dengan animasi naik
     const formDiv = document.getElementById("form-div");
@@ -289,7 +325,7 @@ include_once 'interface/header.php';
       return;
     }
 
-    fetch(`https://localhost/stockopname/api/get_stock.php?csrf_token=${csrfToken}`, {
+    fetch(`https://localhost/stockopname/api/stock.php?csrf_token=${csrfToken}`, {
         method: 'GET'
       })
       .then(response => {

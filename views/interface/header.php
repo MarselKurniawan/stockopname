@@ -6,6 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="/stockopname/assets/css/font.css">
   <link rel="stylesheet" href="/stockopname/assets/css/output.css">
+  <style>
+    body{
+      background-color:#f0f0f1;
+    }
+  </style>
 </head>
 
 <body>
@@ -138,7 +143,7 @@
   <!-- End Sidebar -->
   <script src="node_modules/preline/dist/preline.js"></script>
   <!-- <script src="node_modules/preline/dist/preline.js"></script> -->
-    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+    <script src="https://cdn.tailwindcss.com"></script>
   <!-- Content -->
   <div class="w-full pt-10 px-4 sm:px-6 md:px-8 lg:ps-72">
     <!-- your content goes here ... -->
