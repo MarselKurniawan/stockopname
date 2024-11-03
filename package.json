@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@preline/combobox": "^2.5.0",
     "@preline/datatable": "^2.5.0",
     "@preline/overlay": "^2.5.0",
     "@preline/theme-switch": "^2.5.0",

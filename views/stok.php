@@ -19,7 +19,7 @@ include_once 'interface/header.php';
 </div>
 
 <!-- Card Section -->
-<div class="max-w-8xl px-2 py-4 sm:px-6 lg:px-8 lg:py-14 mx-auto " id="form-div">
+<div class="max-w-8xl px-2 py-4 sm:px-6 lg:px-8 lg:py-14 mx-auto hidden" id="form-div">
   <!-- Card -->
   <div class="bg-white rounded-xl shadow p-4 sm:p-7">
     <div class="text-center mb-8">
@@ -30,63 +30,52 @@ include_once 'interface/header.php';
         
       </p>
     </div>
+<form id="addStockForm" class="space-y-3">
+    <input type="hidden" id="csrf_token" value="<?php echo generate_csrf_token(); ?>">
 
-    <form>
-      <!-- Section -->
-      <div class="py-6 first:pt-0 last:pb-0 border-t first:border-transparent border-gray-200">
-        <label for="af-payment-billing-contact" class="inline-block text-sm font-medium">
-          Toko
-        </label>  
-
+    <!-- Toko Section -->
+    <div class="py-6 first:pt-0 last:pb-0 border-t first:border-transparent border-gray-200">
+        <label class="inline-block text-sm font-medium">Toko</label>  
         <div class="mt-2 space-y-3">
-          <div class="mt-2 space-y-3">
-          
-          <div class="flex flex-col sm:flex-row gap-3">              
-              <select id="citySelect" class="py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
-                  <option selected>Select City</option>
-              </select>
-              
-              <select id="storeSelect" class="py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
-                  <option selected>Select Store</option>
-              </select>
-              <select id="productSelect" class="py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
-                <option selected>Select Produk</option>
-              </select>
-          </div>
-      </div>
-          </div>
-      </div>
-      <!-- End Section -->
+            <div class="flex flex-col sm:flex-row gap-3">              
+                <select id="citySelect" class="py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500">
+                    <option selected>Select City</option>
+                </select>
+                
+                <select id="storeSelect" class="py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500">
+                    <option selected>Select Store</option>
+                </select>
 
-      <!-- Section -->
-      <div class="py-6 first:pt-0 last:pb-0 border-t first:border-transparent border-gray-200">
-        <label for="af-payment-billing-address" class="inline-block text-sm font-medium">
-          SO Detail
-        </label>
-
-        <div class="mt-2 space-y-3">
-          <div class="flex flex-col sm:flex-row gap-3">
-            <input type="text" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="Harga Beli">
-            <input type="text" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="Harga Jual">
-          </div>
-          <input id="af-payment-billing-address" type="date" class="py-2 px-3 pe-11 block w-80 border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="Tanggal Masuk">
-          <div class="flex flex-col sm:flex-row gap-3">
-            <input type="text" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="Stok">
-            <input type="text" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="Laku">
-          </div>
-      </div>
-      </div>
-      <!-- End Section -->
-    </form>
-
-    <div class="mt-5 flex justify-end gap-x-2">
-      <button type="button" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none">
-        Cancel
-      </button>
-      <button type="button" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
-        Save changes
-      </button>
+                <select id="productSelect" class="py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500">
+                    <option selected>Select Produk</option>
+                </select>
+            </div>
+        </div>
     </div>
+
+    <!-- SO Detail Section -->
+    <div class="py-6 first:pt-0 last:pb-0 border-t first:border-transparent border-gray-200">
+        <label class="inline-block text-sm font-medium">SO Detail</label>
+        <div class="mt-2 space-y-3">
+            <div class="flex flex-col sm:flex-row gap-3">
+                <input type="text" id="hargaBeli" name="Harga Beli" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500" placeholder="Harga Beli">
+                <input type="text" id="hargaJual" name="Harga Jual" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500" placeholder="Harga Jual">
+            </div>
+            <input type="date" id="tanggalMasuk" class="py-2 px-3 pe-11 block w-80 border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500" placeholder="Tanggal Masuk">
+            <div class="flex flex-col sm:flex-row gap-3">
+                <input type="text" id="stok" name="Stok" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500" placeholder="Stok">
+                <input type="text" id="laku" name="Laku" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500" placeholder="Laku">
+            </div>
+        </div>
+    </div>
+
+    <!-- Submit Buttons -->
+    <div class="mt-5 flex justify-end gap-x-2">
+        <button type="button" class="py-2 px-3 text-sm font-medium rounded-lg border bg-white text-gray-800 hover:bg-gray-50">Cancel</button>
+        <button type="submit" class="py-2 px-3 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700">Save changes</button>
+    </div>
+</form>
+  <!-- </div> -->
   </div>
   <!-- End Card -->
 </div>
@@ -253,6 +242,59 @@ include_once 'interface/header.php';
 
 
 <script>
+document.addEventListener("DOMContentLoaded", function () {
+    // Handle form submission
+    document.getElementById("addStockForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        // Get the form data
+        const csrf_token = document.getElementById("csrf_token").value;
+        const cityId = document.getElementById("citySelect").value;
+        const storeId = document.getElementById("storeSelect").value;
+        const productId = document.getElementById("productSelect").value;
+        const hargaBeli = document.getElementById("hargaBeli").value;
+        const hargaJual = document.getElementById("hargaJual").value;
+        const tanggalMasuk = document.getElementById("tanggalMasuk").value;
+        const stok = document.getElementById("stok").value;
+        const laku = document.getElementById("laku").value;
+
+        // Prepare data to send
+        const formData = {
+            csrf_token: csrf_token,
+            city_id: cityId,
+            store_id: storeId,
+            product_id: productId,
+            harga_beli: hargaBeli,
+            harga_jual: hargaJual,
+            tanggal_masuk: tanggalMasuk,
+            stok: stok,
+            laku: laku
+        };
+
+        // Send data to addStock.php
+        fetch("https://localhost/stockopname/api/addStock.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {  // Pastikan 'success' sesuai dengan format dari API
+                alert("Data saved successfully!");
+            } else {
+                alert("Failed to save data. " + (data.message || "Unknown error occurred."));
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("An error occurred while saving data.");
+        });
+    });
+});
+
+
   document.addEventListener("DOMContentLoaded", function () {
     // Load products when page loads
     fetch("https://localhost/stockopname/api/products_select.php")
@@ -275,7 +317,7 @@ include_once 'interface/header.php';
             let citySelect = document.getElementById("citySelect");
             data.forEach(city => {
                 let option = document.createElement("option");
-                option.value = id;
+                option.value = city.id;
                 option.text = city.nama_kota;
                 citySelect.add(option);
             });

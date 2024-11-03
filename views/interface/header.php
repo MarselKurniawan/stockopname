@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-hs-theme="light">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="/stockopname/assets/css/font.css">
-  <link rel="stylesheet" href="/stockopname/assets/css/output.css">
+  <link rel="stylesheet" href="https://localhost/stockopname/assets/dist/output.css">
+  <link rel="stylesheet" href="https://localhost/stockopname/assets/css/output.css">
   <style>
     body{
       background-color:#f0f0f1;
@@ -131,7 +132,26 @@
               </a>
             </li>
             <li>
-
+              <button type="button" id="theme-switcher" class="hs-dark-mode hs-dark-mode-active:hidden inline-flex items-center gap-x-2 py-2 px-3 bg-white/10 rounded-full text-sm text-white hover:bg-white/20 focus:outline-none focus:bg-white/20" data-hs-theme-click-value="dark">
+                <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+                </svg>
+                Dark
+              </button>
+              <button type="button" class="hs-dark-mode hs-dark-mode-active:inline-flex hidden items-center gap-x-2 py-2 px-3 bg-white/10 rounded-full text-sm text-white hover:bg-white/20 focus:outline-none focus:bg-white/20" data-hs-theme-click-value="light">
+                <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="4"></circle>
+                  <path d="M12 2v2"></path>
+                  <path d="M12 20v2"></path>
+                  <path d="m4.93 4.93 1.41 1.41"></path>
+                  <path d="m17.66 17.66 1.41 1.41"></path>
+                  <path d="M2 12h2"></path>
+                  <path d="M20 12h2"></path>
+                  <path d="m6.34 17.66-1.41 1.41"></path>
+                  <path d="m19.07 4.93-1.41 1.41"></path>
+                </svg>
+                Light
+              </button>
             </li>
 
           </ul>
@@ -141,9 +161,20 @@
     </div>
   </div>
   <!-- End Sidebar -->
-  <script src="node_modules/preline/dist/preline.js"></script>
-  <!-- <script src="node_modules/preline/dist/preline.js"></script> -->
+  <!-- <script src="./node_modules/preline/dist/preline.js"></script> -->
+  <script src="https://localhost/stockopname/node_modules/preline/dist/preline.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      const themeSwitcher = document.querySelector('#theme-switcher'); // Ganti #theme-switcher dengan ID atau selector dark mode switcher
+      const html = document.documentElement;
+
+      themeSwitcher.addEventListener('click', () => {
+        const currentTheme = html.getAttribute('data-hs-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-hs-theme', newTheme);
+      });
+
+    </script>
   <!-- Content -->
   <div class="w-full pt-10 px-4 sm:px-6 md:px-8 lg:ps-72">
     <!-- your content goes here ... -->

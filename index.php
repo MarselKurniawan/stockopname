@@ -28,6 +28,8 @@ if ($request == '' || $request == '/login') {
     require_once 'views/pabrik.php';
 } elseif ($request == '/bahan-baku') {
     require_once 'views/bahanbaku.php';
+} elseif ($request == '/track-bahan') {
+    require_once 'views/trackbahan.php';
 } else {
     http_response_code(404);
     echo "404 - Page Not Found";

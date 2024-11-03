@@ -14,6 +14,7 @@ include_once 'interface/header.php';
 ?>
 <!-- Pastikan ada tempat untuk menyimpan token CSRF -->
 
+
 <!-- Card Section -->
 <div class="max-w-[85rem] px-4 py-4 sm:px-6 lg:px-8 lg:py-2 mx-auto">
   <!-- Grid -->
@@ -63,6 +64,64 @@ include_once 'interface/header.php';
   <!-- End Grid -->
 </div>
 <!-- End Card Section -->
+
+
+<!-- Card Section -->
+<div class="max-w-8xl px-2 py-4 sm:px-6 lg:px-8 lg:py-14 mx-auto " id="form-div">
+  <!-- Card -->
+  <div class="bg-white rounded-xl shadow p-4 sm:p-7">
+    <div class="text-center mb-8">
+      <h2 class="text-2xl md:text-3xl font-bold text-gray-800">
+        Input Barang 
+      </h2>
+      <p class="text-sm text-gray-600">
+        
+      </p>
+    </div>
+<form id="addStockForm" class="space-y-3">
+    <input type="hidden" id="csrf_token" value="<?php echo generate_csrf_token(); ?>">
+
+    <!-- Toko Section -->
+    <div class="py-6 first:pt-0 last:pb-0 border-t first:border-transparent border-gray-200">
+        <label class="inline-block text-sm font-medium">Source</label>  
+        <div class="mt-2 space-y-3">
+            <div class="flex flex-col sm:flex-row gap-3">              
+                <select id="citySelect" class="py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500">
+                    <option selected>Select Supplier</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- SO Detail Section -->
+    <div class="py-6 first:pt-0 last:pb-0 border-t first:border-transparent border-gray-200">
+        <label class="inline-block text-sm font-medium">Detail</label>
+        <div class="mt-2 space-y-3">
+            <div class="flex flex-col sm:flex-row gap-3">
+                <input type="text" id="hargaBeli" name="Harga Beli" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500" placeholder="Nama Bahan">
+                <select id="citySelect" class="py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500">
+                    <option >kg</option>
+                    <option >Gram</option>
+                </select>
+                <input type="text" id="hargaJual" name="Harga Jual" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500" placeholder="">
+            </div>
+            <div class="flex flex-col sm:flex-row gap-3">
+              <input type="text" id="stok" name="Stok" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500" placeholder="Stok">
+              <input type="text" id="laku" name="Laku" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500" placeholder="Harga Beli">
+            </div>
+        </div>
+    </div>
+
+    <!-- Submit Buttons -->
+    <div class="mt-5 flex justify-end gap-x-2">
+        <button type="button" class="py-2 px-3 text-sm font-medium rounded-lg border bg-white text-gray-800 hover:bg-gray-50">Cancel</button>
+        <button type="submit" class="py-2 px-3 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700">Save changes</button>
+    </div>
+</form>
+  <!-- </div> -->
+  </div>
+  <!-- End Card -->
+</div>
 
 <!-- Table Section -->
 <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
@@ -115,7 +174,15 @@ include_once 'interface/header.php';
                 <th scope="col" class="px-6 py-3 text-start">
                   <div class="flex items-center gap-x-2">
                     <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      Satuan
+                      Jumlah
+                    </span>
+                  </div>
+                </th>
+
+                <th scope="col" class="px-6 py-3 text-start">
+                  <div class="flex items-center gap-x-2">
+                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
+                      Stok Masuk
                     </span>
                   </div>
                 </th>
@@ -239,7 +306,8 @@ include_once 'interface/header.php';
           let row = `
                 <tr>
                     <td class="p-6 text-sm">${item.nama_bahan}</td>
-                    <td class="p-6 text-sm">${item.satuan}</td>
+                    <td class="p-6 text-sm">${item.jumlah} ${item.satuan}</td>
+                    <td class="p-6 text-sm">10</td>
                     <td class="p-6 text-sm">${item.stok_awal}</td>
                     <td class="p-6 text-sm">${item.stok_terakhir}</td>
                     <td class="p-6 text-sm">${hargaBeliFormatted}</td>
