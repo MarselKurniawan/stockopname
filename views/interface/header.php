@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="/stockopname/assets/css/font.css">
   <link rel="stylesheet" href="https://localhost/stockopname/assets/dist/output.css">
+  <link rel="stylesheet" href="https://localhost/stockopname/assets/css/element.css">
   <link rel="stylesheet" href="https://localhost/stockopname/assets/css/output.css">
   <style>
     body{

@@ -74,19 +74,14 @@ include_once 'interface/header.php';
       <h2 class="text-2xl md:text-3xl font-bold text-gray-800">
         Input Barang 
       </h2>
-      <p class="text-sm text-gray-600">
-        
-      </p>
     </div>
-<form id="addStockForm" class="space-y-3">
+<form id="addBahanForm" class="space-y-3">
     <input type="hidden" id="csrf_token" value="<?php echo generate_csrf_token(); ?>">
-
-    <!-- Toko Section -->
-    <div class="py-6 first:pt-0 last:pb-0 border-t first:border-transparent border-gray-200">
+    <div class="py-4 first:pt-0 last:pb-0">
         <label class="inline-block text-sm font-medium">Source</label>  
         <div class="mt-2 space-y-3">
             <div class="flex flex-col sm:flex-row gap-3">              
-                <select id="citySelect" class="py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500">
+                <select id="supplierSelect" class="py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500">
                     <option selected>Select Supplier</option>
                 </select>
             </div>
@@ -98,16 +93,28 @@ include_once 'interface/header.php';
         <label class="inline-block text-sm font-medium">Detail</label>
         <div class="mt-2 space-y-3">
             <div class="flex flex-col sm:flex-row gap-3">
-                <input type="text" id="hargaBeli" name="Harga Beli" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500" placeholder="Nama Bahan">
-                <select id="citySelect" class="py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500">
-                    <option >kg</option>
-                    <option >Gram</option>
+              <div class="">
+                 <select id="bahanSelect" class="hidden py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500">
+                    <option selected>Select Bahan</option>
+                </select> 
+                <input type="text" id="namaBahanInput" name="Nama Bahan" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500" placeholder="Nama Bahan">
+                <span class="text-sm" id="stok-add-element">Tambah Jumlah Stok Produk?</span>
+              </div>
+                <div class="">
+                  <select id="satuanSelect" class="py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500">
+                    <option selected>Select Satuan</option>
+                    <option value="kg">Kg</option>
+                    <option value="butir">Butir</option>
+                    <option value="liter">Liter</option>
+                    <option value="pieces">Pieces</option>
                 </select>
-                <input type="text" id="hargaJual" name="Harga Jual" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500" placeholder="">
+                 <input type="text" id="" name="" class="hidden" placeholder="">
+                <span class="text-sm" id="stok-add-element"></span>
+                </div>
             </div>
             <div class="flex flex-col sm:flex-row gap-3">
-              <input type="text" id="stok" name="Stok" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500" placeholder="Stok">
-              <input type="text" id="laku" name="Laku" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500" placeholder="Harga Beli">
+              <input type="text" id="jumlah" name="jumlah" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500" placeholder="Jumlah">
+              <input type="number" inputmode="numeric" id="hargaBeli" name="hargaBeli" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500" placeholder="Harga Beli">
             </div>
         </div>
     </div>
@@ -260,6 +267,112 @@ include_once 'interface/header.php';
 
 
 <script>
+document.getElementById('addBahanForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const supplierId = document.getElementById('supplierSelect').value;
+    const bahanId = document.getElementById('bahanSelect').value;
+    const namaBahanInput = document.getElementById('namaBahanInput').value;
+    const satuan = document.getElementById('satuanSelect').value;
+    const jumlah = document.getElementById('jumlah').value;
+
+    // Check if a bahan is selected or if a new bahan name is entered
+    const bahanName = (bahanId && bahanId !== "Select Bahan") ? bahanId : namaBahanInput;
+
+    // Construct data object for submission
+    const data = {
+        csrf_token: document.getElementById('csrf_token').value,
+        supplier_id: supplierId,
+        nama_bahan: bahanName,
+        satuan: satuan,
+        jumlah: jumlah
+    };
+
+    // Check if the bahan is being added or updated
+    fetch('https://localhost/stockopname/api/addBahan.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.status === 'success') {
+            alert('Bahan added/updated successfully');
+        } else {
+            alert(result.message);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+});
+
+
+// Function to check and set the satuan when selecting bahan
+document.getElementById('bahanSelect').addEventListener('change', function() {
+    const selectedBahanId = this.value;
+
+    // Fetch the satuan for the selected bahan (you would need to implement this API)
+    fetch(`https://localhost/stockopname/api/getBahanSatuan.php?id=${selectedBahanId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                document.getElementById('satuanSelect').value = data.satuan;
+            }
+        })
+        .catch(error => console.error('Error fetching satuan:', error));
+});
+
+
+
+  const stokAddElement = document.getElementById("stok-add-element");
+  const bahanSelect = document.getElementById("bahanSelect");
+  const namaBahan = document.getElementById("namaBahanInput");
+
+  // Event listener untuk klik pada stok-add-element
+  stokAddElement.addEventListener("click", function() {
+    // Toggle visibility
+    if (bahanSelect.classList.contains("hidden")) {
+      // Jika select tersembunyi, tampilkan select dan sembunyikan input text
+      bahanSelect.classList.remove("hidden");
+      namaBahan.classList.add("hidden");
+      // Ubah teks span
+      stokAddElement.textContent = "Masukkan Bahan Baru";
+    } else {
+      // Jika select terlihat, sembunyikan select dan tampilkan input text
+      bahanSelect.classList.add("hidden");
+      namaBahan.classList.remove("hidden");
+      // Ubah teks span kembali
+      stokAddElement.textContent = "Tambah Jumlah Stok Produk?";
+    }
+  });
+    document.addEventListener("DOMContentLoaded", function () {
+    // Load products when page loads
+      fetch("https://localhost/stockopname/api/supplier_select.php")
+        .then(response => response.json())
+        .then(data => {
+            let supplierSelect = document.getElementById("supplierSelect");
+            data.forEach(product => {
+                let option = document.createElement("option");
+                option.value = product.id;
+                option.text = product.nama;
+                supplierSelect.add(option);
+            });
+        });
+    });
+
+     document.addEventListener("DOMContentLoaded", function () {
+    // Load products when page loads
+    fetch("https://localhost/stockopname/api/selectBahan.php")
+        .then(response => response.json())
+        .then(data => {
+            let bahanSelect = document.getElementById("bahanSelect");
+            data.forEach(product => {
+                let option = document.createElement("option");
+                option.value = product.id_bahan;
+                option.text = product.nama_bahan;
+                bahanSelect.add(option);
+            });
+        });
+    });
   document.addEventListener('DOMContentLoaded', function() {
     const csrfToken = document.getElementById('csrf_token').value;
 

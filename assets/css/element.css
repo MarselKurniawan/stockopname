@@ -1,0 +1,11 @@
+#stok-add-element{
+    font-size: 8px;
+    cursor: pointer;
+    color: blue;
+}
+
+#stok-add-element:hover {
+    font-size: 8px;
+    cursor: pointer;
+    color: lightblue;
+}
