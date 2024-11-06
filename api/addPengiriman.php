@@ -39,23 +39,18 @@ if ($input === null) {
 $city_id = $input['city_id'] ?? null;
 $store_id = $input['store_id'] ?? null;
 $product_id = $input['product_id'] ?? null;
-$harga_beli = $input['harga_beli'] ?? null;
-$harga_jual = $input['harga_jual'] ?? null; // Periksa penamaan yang konsisten
-$tanggal_masuk = $input['tanggal_masuk'] ?? null;
-$stok = $input['stok'] ?? null;
-$laku = $input['laku'] ?? null;
+$harga = $input['harga'] ?? null;
+$tanggal = $input['tanggal'] ?? null;
+$jumlah = $input['jumlah'] ?? null;
 
 // Validasi data
-if (empty($city_id) || empty($store_id) || empty($product_id) || empty($harga_beli) || empty($harga_jual) || empty($tanggal_masuk) || empty($stok) || empty($laku)) {
+if (empty($city_id) || empty($store_id) || empty($product_id) || empty($harga) || empty($tanggal) || empty($jumlah)) {
     echo json_encode(['status' => 'error', 'message' => 'All fields are required']);
     exit;
 }
 
-// Hitung laku_nominal
-$laku_nominal = $harga_jual * $laku;
-
-// Siapkan query untuk menambahkan data stok baru
-$query = "INSERT INTO stok (toko_id, produk_id, harga_beli, harga_jual, tanggal_masuk, jumlah_stok, laku, laku_nominal) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)";
+// Siapkan query untuk menambahkan data jumlah baru
+$query = "INSERT INTO pengiriman (toko_id, produk_id, harga, tanggal, jumlah ) VALUES ( ?, ?, ?, ?, ?)";
 $stmt = $conn->prepare($query);
 
 if (!$stmt) {
@@ -64,7 +59,7 @@ if (!$stmt) {
 }
 
 // Bind parameter dan eksekusi query
-$stmt->bind_param('iiddsiid', $store_id, $product_id, $harga_beli, $harga_jual, $tanggal_masuk, $stok, $laku, $laku_nominal);
+$stmt->bind_param('iissi', $store_id, $product_id, $harga, $tanggal, $jumlah);
 
 if ($stmt->execute()) {
     echo json_encode(['status' => 'success', 'message' => 'Stock added successfully']);

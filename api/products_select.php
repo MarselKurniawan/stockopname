@@ -8,7 +8,7 @@ $conn = db_connect(); // Connect to the database
 
 
 try {
-    $stmt = $conn->prepare("SELECT id, nama_produk, kemasan, ukuran_stoples, ukuran_mika, ukuran_paket FROM produk");
+    $stmt = $conn->prepare("SELECT id, nama_produk, kemasan, ukuran_stoples, ukuran_mika, ukuran_paket, harga FROM produk");
     $stmt->execute();
     $result = $stmt->get_result(); // Get the result set
 
@@ -28,7 +28,8 @@ try {
         if ($packaging) {
             $products[] = [
                 'id' => $row['id'],
-                'display_name' => $row['nama_produk'] .' '.  $row['kemasan'] . ' '. $packaging
+                'display_name' => $row['nama_produk'] .' '.  $row['kemasan'] . ' '. $packaging,
+                'harga' => $row['harga']
             ];
         }
     }

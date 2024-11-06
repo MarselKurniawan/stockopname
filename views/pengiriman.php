@@ -19,7 +19,7 @@ include_once 'interface/header.php';
 </div>
 
 <!-- Card Section -->
-<div class="max-w-8xl px-2 py-4 sm:px-6 lg:px-8 lg:py-14 mx-auto hidden" id="form-div">
+<div class="max-w-8xl px-2 py-4 sm:px-6 lg:px-8 lg:py-14 mx-auto " id="form-div">
   <!-- Card -->
   <div class="bg-white rounded-xl shadow p-4 sm:p-7">
     <div class="text-center mb-8">
@@ -49,23 +49,45 @@ include_once 'interface/header.php';
                 <select id="productSelect" class="py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500">
                     <option selected>Select Produk</option>
                 </select>
+
+                <select id="diskonSelect" class="py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500">
+                    <option value="">Harga Normal</option>
+                    <option value="">2.5%</option>
+                    <option value="">5%</option>
+                    <option value="">10%</option>
+                </select>
             </div>
         </div>
     </div>
 
+     <div class="harga-after-diskon inline-flex items-end gap-3">
+     <div class="grid grid-cols-1">
+      <span class="harga-awal text-gray-400">
+        
+      </span>
+       <span class="text-sm">
+        
+      </span>
+     </div>
+      <div class="persentas">
+      <span class="py-1 px-1.5 inline-flex items-center gap-x-1 text-xs font-medium bg-red-100 text-red-800 rounded-full dark:bg-red-500/10 dark:text-red-500">
+        <svg class="shrink-0 size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 17 13.5 8.5 8.5 13.5 2 7"></polyline>
+          <polyline points="16 17 22 17 22 11"></polyline>
+        </svg>
+        
+      </span>
+    </div>
+     </div>
     <!-- SO Detail Section -->
     <div class="py-6 first:pt-0 last:pb-0 border-t first:border-transparent border-gray-200">
         <label class="inline-block text-sm font-medium">SO Detail</label>
         <div class="mt-2 space-y-3">
             <div class="flex flex-col sm:flex-row gap-3">
-                <input type="text" id="hargaBeli" name="Harga Beli" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500" placeholder="Harga Beli">
-                <input type="text" id="hargaJual" name="Harga Jual" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500" placeholder="Harga Jual">
+                <input type="text" id="harga" name="Harga" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500" placeholder="Harga">
+                <input type="text" id="jumlah" name="jumlah" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500" placeholder="Jumlah">
             </div>
-            <input type="date" id="tanggalMasuk" class="py-2 px-3 pe-11 block w-80 border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500" placeholder="Tanggal Masuk">
-            <div class="flex flex-col sm:flex-row gap-3">
-                <input type="text" id="stok" name="Stok" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500" placeholder="Stok">
-                <input type="text" id="laku" name="Laku" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500" placeholder="Laku">
-            </div>
+            <input type="date" id="tanggal" class="py-2 px-3 pe-11 block w-80 border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500" placeholder="Tanggal Masuk">
         </div>
     </div>
 
@@ -99,7 +121,7 @@ include_once 'interface/header.php';
             </div>
 
             <div>
-              <div class="inline-flex gap-x-2">
+              <div class="inline-flex gap-x-2">hargaBeli
                 <button id="show-form-btn" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none" href="#">
                   <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M5 12h14" />
@@ -144,7 +166,15 @@ include_once 'interface/header.php';
                 <th scope="col" class="px-6 py-3 text-start">
                   <div class="flex items-center gap-x-2">
                     <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      Harga Beli
+                      Harga 
+                    </span>
+                  </div>
+                </th>
+
+                  <th scope="col" class="px-6 py-3 text-start">
+                  <div class="flex items-center gap-x-2">
+                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
+                      Jumlah
                     </span>
                   </div>
                 </th>
@@ -152,39 +182,11 @@ include_once 'interface/header.php';
                 <th scope="col" class="px-6 py-3 text-start">
                   <div class="flex items-center gap-x-2">
                     <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      Harga Jual
+                      Tanggal 
                     </span>
                   </div>
                 </th>
-
-                <th scope="col" class="px-6 py-3 text-start">
-                  <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      Tanggal Masuk
-                    </span>
-                  </div>
-                </th>
-                <th scope="col" class="px-6 py-3 text-start">
-                  <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      Stok
-                    </span>
-                  </div>
-                </th>
-                 <th scope="col" class="px-6 py-3 text-start">
-                  <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      Laku
-                    </span>
-                  </div>
-                </th>
-                 <th scope="col" class="px-6 py-3 text-start">
-                  <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      Laku *nominal
-                    </span>
-                  </div>
-                </th>
+              
                 <th scope="col" class="px-6 py-3 text-start">
                   <div class="flex items-center gap-x-2">
                     <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
@@ -252,11 +254,9 @@ document.addEventListener("DOMContentLoaded", function () {
         const cityId = document.getElementById("citySelect").value;
         const storeId = document.getElementById("storeSelect").value;
         const productId = document.getElementById("productSelect").value;
-        const hargaBeli = document.getElementById("hargaBeli").value;
-        const hargaJual = document.getElementById("hargaJual").value;
-        const tanggalMasuk = document.getElementById("tanggalMasuk").value;
-        const stok = document.getElementById("stok").value;
-        const laku = document.getElementById("laku").value;
+        const harga = document.getElementById("harga").value;
+        const tanggal = document.getElementById("tanggal").value;
+        const jumlah = document.getElementById("jumlah").value;
 
         // Prepare data to send
         const formData = {
@@ -264,15 +264,13 @@ document.addEventListener("DOMContentLoaded", function () {
             city_id: cityId,
             store_id: storeId,
             product_id: productId,
-            harga_beli: hargaBeli,
-            harga_jual: hargaJual,
-            tanggal_masuk: tanggalMasuk,
-            stok: stok,
-            laku: laku
+            harga: harga,
+            tanggal: tanggal,
+            jumlah: jumlah
         };
 
         // Send data to addStock.php
-        fetch("https://localhost/stockopname/api/addStock.php", {
+        fetch("https://localhost/stockopname/api/addPengiriman.php", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -293,22 +291,67 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
+document.addEventListener("DOMContentLoaded", function () {
+    const productSelect = document.getElementById("productSelect");
+    const diskonSelect = document.getElementById("diskonSelect");
+    const hargaAwalDisplay = document.querySelector(".harga-awal");
+    const hargaAfterDiskonDisplay = document.querySelector(".harga-after-diskon .text-sm");
+    const persentaseDisplay = document.querySelector(".persentas span");
 
+    let originalPrice = 0;
 
-  document.addEventListener("DOMContentLoaded", function () {
     // Load products when page loads
     fetch("https://localhost/stockopname/api/products_select.php")
         .then(response => response.json())
         .then(data => {
-            let productSelect = document.getElementById("productSelect");
             data.forEach(product => {
                 let option = document.createElement("option");
                 option.value = product.id;
-                option.text = product.display_name;
+                option.text = `${product.display_name} - Rp. ${parseInt(product.harga).toLocaleString()}`;
+                option.dataset.harga = product.harga;
                 productSelect.add(option);
             });
         });
+
+    // Event listener for product selection
+    productSelect.addEventListener("change", function () {
+        const selectedOption = productSelect.options[productSelect.selectedIndex];
+        originalPrice = parseFloat(selectedOption.dataset.harga || 0);
+
+        // Display original price
+        hargaAwalDisplay.textContent = `Rp. ${originalPrice.toLocaleString()}`;
+        updatePriceDisplay();
     });
+
+    // Event listener for discount selection
+    diskonSelect.addEventListener("change", function () {
+        updatePriceDisplay();
+    });
+
+    function updatePriceDisplay() {
+        const increasePercentage = parseFloat(diskonSelect.options[diskonSelect.selectedIndex].text) || 0;
+
+        // Display the selected percentage
+        persentaseDisplay.textContent = `${increasePercentage}%`;
+
+        // Calculate increased price with the selected percentage
+        let increasedPrice = originalPrice * (1 + increasePercentage / 100);
+
+        // Round to nearest 500
+        increasedPrice = roundToNearest500(increasedPrice);
+
+        // Display the increased price
+        hargaAfterDiskonDisplay.textContent = `Rp. ${increasedPrice.toLocaleString()}`;
+    }
+
+    // Function to round to the nearest 500
+    function roundToNearest500(price) {
+        return Math.round(price / 500) * 500;
+    }
+});
+
+
+
   document.addEventListener("DOMContentLoaded", function () {
     // Load cities when page loads
     fetch("https://localhost/stockopname/api/cities_select.php")
@@ -367,7 +410,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    fetch(`https://localhost/stockopname/api/stock.php?csrf_token=${csrfToken}`, {
+    fetch(`https://localhost/stockopname/api/pengiriman.php?csrf_token=${csrfToken}`, {
         method: 'GET'
       })
       .then(response => {
@@ -380,31 +423,18 @@ document.addEventListener("DOMContentLoaded", function () {
         const tableBody = document.getElementById('stokTable');
         data.data.forEach(item => {
           // Memformat harga menjadi ribuan
-          let hargaBeliFormatted = new Intl.NumberFormat('id-ID', {
+          let hargaFormatted = new Intl.NumberFormat('id-ID', {
             style: 'currency',
             currency: 'IDR'
-          }).format(item.harga_beli);
-          let hargaJualFormatted = new Intl.NumberFormat('id-ID', {
-            style: 'currency',
-            currency: 'IDR'
-          }).format(item.harga_jual);
-
-          let nominalLakuFormatted = new Intl.NumberFormat('id-ID',{
-            style: 'currency',
-            currency: 'IDR'
-          }).format(item.laku_nominal);
+          }).format(item.harga);
 
           // Memformat tanggal ke format tanggal bulan tahun
-          let tanggalMasukFormatted = new Date(item.tanggal_masuk).toLocaleDateString('id-ID', {
+          let tanggalFormatted = new Date(item.tanggal).toLocaleDateString('id-ID', {
             day: 'numeric',
             month: 'long',
             year: 'numeric'
           });
-          let tanggalKadaluarsaFormatted = new Date(item.tanggal_kadaluarsa).toLocaleDateString('id-ID', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric'
-          });
+
 
           // Membuat baris tabel dengan data yang diformat
           let row = `
@@ -412,12 +442,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     <td class="p-6 text-sm">${item.nama_kota}</td>
                     <td class="p-6 text-sm">${item.nama_toko}</td>
                     <td class="p-6 text-sm">${item.nama_produk}</td>
-                    <td class="p-6 text-sm">${hargaBeliFormatted}</td>
-                    <td class="p-6 text-sm">${hargaJualFormatted}</td>
-                    <td class="p-6 text-sm">${tanggalMasukFormatted}</td>
-                    <td class="p-6 text-sm">${item.jumlah_stok}</td>
-                    <td class="p-6 text-sm">${item.laku}</td>
-                    <td class="p-6 text-sm">${nominalLakuFormatted}</td>
+                    <td class="p-6 text-sm">${hargaFormatted}</td>
+                    <td class="p-6 text-sm">${item.jumlah}</td>
+                    <td class="p-6 text-sm">${tanggalFormatted}</td>
+
                 </tr>`;
           tableBody.insertAdjacentHTML('beforeend', row); // Menambahkan baris baru ke tabel
         });

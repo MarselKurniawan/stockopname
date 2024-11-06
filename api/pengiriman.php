@@ -19,11 +19,11 @@ if ($conn->connect_error) {
     exit;
 }
 
-// Query untuk mengambil data stok
-$stmt = $conn->prepare("SELECT stok.*, produk.nama_produk, toko.nama_toko, kota.nama_kota 
-    FROM stok 
-    JOIN produk ON stok.produk_id = produk.id 
-    JOIN toko ON stok.toko_id = toko.id 
+// Query untuk mengambil data pengiriman
+$stmt = $conn->prepare("SELECT pengiriman.*, produk.nama_produk, toko.nama_toko, kota.nama_kota 
+    FROM pengiriman 
+    JOIN produk ON pengiriman.produk_id = produk.id 
+    JOIN toko ON pengiriman.toko_id = toko.id 
     JOIN kota ON toko.kota_id = kota.id;");
 if (!$stmt) {
     echo json_encode(['status' => 'error', 'message' => 'Query preparation failed: ' . $conn->error]);
@@ -44,14 +44,14 @@ if (!$result) {
 }
 
 // Memproses hasil
-$stok = [];
+$pengiriman = [];
 while ($row = $result->fetch_assoc()) {
-    $stok[] = $row;
+    $pengiriman[] = $row;
 }
 
 // Mengembalikan hasil dalam format JSON
-if (!empty($stok)) {
-    echo json_encode(['status' => 'success', 'data' => $stok]);
+if (!empty($pengiriman)) {
+    echo json_encode(['status' => 'success', 'data' => $pengiriman]);
 } else {
     echo json_encode(['status' => 'success', 'data' => [], 'message' => 'No stock found.']);
 }

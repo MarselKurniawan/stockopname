@@ -18,8 +18,8 @@ if ($request == '' || $request == '/login') {
     require_once 'views/login.php'; 
 } elseif ($request == '/dashboard') {
     require_once 'views/dashboard.php'; 
-} elseif ($request == '/stock') {
-    require_once 'views/stok.php'; 
+} elseif ($request == '/pengiriman') {
+    require_once 'views/pengiriman.php'; 
 } elseif ($request == '/retur') {
     require_once 'views/retur.php'; 
 } elseif ($request == '/produk') {
