@@ -121,7 +121,7 @@ include_once 'interface/header.php';
             </div>
 
             <div>
-              <div class="inline-flex gap-x-2">hargaBeli
+              <div class="inline-flex gap-x-2">
                 <button id="show-form-btn" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none" href="#">
                   <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M5 12h14" />
@@ -270,7 +270,7 @@ document.addEventListener("DOMContentLoaded", function () {
         };
 
         // Send data to addStock.php
-        fetch("https://localhost/stockopname/api/addPengiriman.php", {
+        fetch("/stockopname/api/addPengiriman.php", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -301,7 +301,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let originalPrice = 0;
 
     // Load products when page loads
-    fetch("https://localhost/stockopname/api/products_select.php")
+    fetch("/stockopname/api/products_select.php")
         .then(response => response.json())
         .then(data => {
             data.forEach(product => {
@@ -354,7 +354,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   document.addEventListener("DOMContentLoaded", function () {
     // Load cities when page loads
-    fetch("https://localhost/stockopname/api/cities_select.php")
+    fetch("/stockopname/api/cities_select.php")
         .then(response => response.json())
         .then(data => {
             let citySelect = document.getElementById("citySelect");
@@ -370,7 +370,7 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("citySelect").addEventListener("change", function () {
             let cityId = this.value;
             
-            fetch(`https://localhost/stockopname/api/stores_select.php?city_id=${cityId}`)
+            fetch(`/stockopname/api/stores_select.php?city_id=${cityId}`)
                 .then(response => response.json())
                 .then(data => {
                     let storeSelect = document.getElementById("storeSelect");
@@ -410,7 +410,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    fetch(`https://localhost/stockopname/api/pengiriman.php?csrf_token=${csrfToken}`, {
+    fetch(`/stockopname/api/pengiriman.php?csrf_token=${csrfToken}`, {
         method: 'GET'
       })
       .then(response => {

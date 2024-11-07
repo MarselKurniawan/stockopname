@@ -21,7 +21,9 @@ if ($request == '' || $request == '/login') {
 } elseif ($request == '/pengiriman') {
     require_once 'views/pengiriman.php'; 
 } elseif ($request == '/retur') {
-    require_once 'views/retur.php'; 
+    require_once 'views/retur.php';
+} elseif ($request == '/stock') {
+    require_once 'views/stock.php';
 } elseif ($request == '/produk') {
     require_once 'views/produk.php'; 
 } elseif ($request == '/pabrik') {
