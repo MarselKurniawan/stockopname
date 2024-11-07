@@ -38,45 +38,53 @@ include_once 'interface/header.php';
                 <label class="inline-block text-sm font-medium">Toko</label>
                 <div class="mt-2 space-y-3">
                     <div class="flex flex-col sm:flex-row gap-3">
-                        <select id="citySelect" class="py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500">
-                            <option selected>Select City</option>
-                        </select>
-
-                        <select id="storeSelect" class="py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500">
-                            <option selected>Select Store</option>
-                        </select>
-
-                        <select id="productSelect" class="py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500">
-                            <option selected>Select Produk</option>
-                        </select>
-
-                        <select id="diskonSelect" class="py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500">
-                            <option value="">Harga Normal</option>
-                            <option value="">2.5%</option>
-                            <option value="">5%</option>
-                            <option value="">10%</option>
+                        <select id="pengirimanSelect" class="py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500">
+                            <option selected>Select Pengiriman</option>
                         </select>
                     </div>
-                </div>
-            </div>
+                   <div class="grid md:grid-cols-2 gap-3 p-2" id="detailPengiriman">
+    <div>
+        <div class="grid space-y-3">
+            <dl class="flex flex-col sm:flex-row gap-x-3 text-sm">
+                <dt class="min-w-36 max-w-[200px] text-gray-500 dark:text-neutral-500">Nama Toko:</dt>
+                <dd class="font-medium text-gray-500">
+                    <span class="block font-semibold" id="namaToko">-</span>
+                </dd>
+            </dl>
+            <dl class="flex flex-col sm:flex-row gap-x-3 text-sm">
+                <dt class="min-w-36 max-w-[200px] text-gray-500 dark:text-neutral-500">Produk:</dt>
+                <dd class="font-medium text-gray-500">
+                    <span class="block font-semibold" id="namaProduk">-</span>
+                </dd>
+            </dl>
+        </div>
+    </div>
 
-            <div class="harga-after-diskon inline-flex items-end gap-3">
-                <div class="grid grid-cols-1">
-                    <span class="harga-awal text-gray-400">
+    <div>
+        <div class="grid space-y-3">
+            <dl class="flex flex-col sm:flex-row gap-x-3 text-sm">
+                <dt class="min-w-36 max-w-[200px] text-gray-500 dark:text-neutral-500">Jumlah Stok:</dt>
+                <dd class="font-medium text-gray-500">
+                    <span id="jumlahStok">-</span>
+                </dd>
+            </dl>
+            <dl class="flex flex-col sm:flex-row gap-x-3 text-sm">
+                <dt class="min-w-36 max-w-[200px] text-gray-500 dark:text-neutral-500">Harga:</dt>
+                <dd class="font-medium text-gray-500">
+                    <span id="harga">-</span>
+                </dd>
+            </dl>
+            <dl class="flex flex-col sm:flex-row gap-x-3 text-sm">
+                <dt class="min-w-36 max-w-[200px] text-gray-500 dark:text-neutral-500">Tanggal:</dt>
+                <dd class="font-medium text-gray-500">
+                    <span id="tanggal">-</span>
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>
 
-                    </span>
-                    <span class="text-sm">
 
-                    </span>
-                </div>
-                <div class="persentas">
-                    <span class="py-1 px-1.5 inline-flex items-center gap-x-1 text-xs font-medium bg-red-100 text-red-800 rounded-full dark:bg-red-500/10 dark:text-red-500">
-                        <svg class="shrink-0 size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="22 17 13.5 8.5 8.5 13.5 2 7"></polyline>
-                            <polyline points="16 17 22 17 22 11"></polyline>
-                        </svg>
-
-                    </span>
                 </div>
             </div>
             <!-- SO Detail Section -->
@@ -84,10 +92,10 @@ include_once 'interface/header.php';
                 <label class="inline-block text-sm font-medium">SO Detail</label>
                 <div class="mt-2 space-y-3">
                     <div class="flex flex-col sm:flex-row gap-3">
-                        <input type="text" id="harga" name="Harga" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500" placeholder="Harga">
-                        <input type="text" id="jumlah" name="jumlah" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500" placeholder="Jumlah">
+                        <input type="text" id="laku" name="Laku" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500" placeholder="Laku">
+                        <span id="lakuError" class="text-red-500 text-sm hidden">Jumlah 'Laku' tidak boleh lebih dari jumlah stok!</span>
+                        <input type="date" id="tanggal" class="py-2 px-3 pe-11 block w-80 border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500" placeholder="Tanggal Masuk">
                     </div>
-                    <input type="date" id="tanggal" class="py-2 px-3 pe-11 block w-80 border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500" placeholder="Tanggal Masuk">
                 </div>
             </div>
 
@@ -267,7 +275,7 @@ include_once 'interface/header.php';
 
             // Get the form data
             const csrf_token = document.getElementById("csrf_token").value;
-            const cityId = document.getElementById("citySelect").value;
+            const cityId = document.getElementById("pengirimanSelect").value;
             const storeId = document.getElementById("storeSelect").value;
             const productId = document.getElementById("productSelect").value;
             const harga = document.getElementById("harga").value;
@@ -367,40 +375,69 @@ include_once 'interface/header.php';
     });
 
 
+document.addEventListener("DOMContentLoaded", function() {
+    let jumlahStok = 0; // To store the stock amount
 
-    document.addEventListener("DOMContentLoaded", function() {
-        // Load cities when page loads
-        fetch("/stockopname/api/cities_select.php")
-            .then(response => response.json())
-            .then(data => {
-                let citySelect = document.getElementById("citySelect");
-                data.forEach(city => {
-                    let option = document.createElement("option");
-                    option.value = city.id;
-                    option.text = city.nama_kota;
-                    citySelect.add(option);
-                });
+    // Fetch pengiriman data and populate the select dropdown
+    fetch("/stockopname/api/selectPengiriman.php")
+        .then(response => response.json())
+        .then(data => {
+            let pengirimanSelect = document.getElementById("pengirimanSelect");
+            data.forEach(item => {
+                let option = document.createElement("option");
+                option.value = item.id;
+                option.text = item.nama_toko;
+                pengirimanSelect.add(option);
             });
 
-        // Fetch stores based on selected city
-        document.getElementById("citySelect").addEventListener("change", function() {
-            let cityId = this.value;
+            pengirimanSelect.addEventListener("change", function() {
+                const selectedId = pengirimanSelect.value;
+                const selectedData = data.find(item => item.id == selectedId);
+                if (selectedData) {
+                    jumlahStok = selectedData.jumlah; // Update the jumlahStok variable
 
-            fetch(`/stockopname/api/stores_select.php?city_id=${cityId}`)
-                .then(response => response.json())
-                .then(data => {
-                    let storeSelect = document.getElementById("storeSelect");
-                    storeSelect.innerHTML = '<option selected>Select Store</option>';
+                    document.getElementById("namaToko").textContent = selectedData.nama_toko;
+                    document.getElementById("namaProduk").textContent = selectedData.nama_produk;
+                    document.getElementById("jumlahStok").textContent = jumlahStok;
 
-                    data.forEach(store => {
-                        let option = document.createElement("option");
-                        option.value = store.id;
-                        option.text = store.nama_toko;
-                        storeSelect.add(option);
+                    const hargaFormatted = new Intl.NumberFormat('id-ID', {
+                        style: 'currency',
+                        currency: 'IDR',
+                        minimumFractionDigits: 0
+                    }).format(selectedData.harga);
+                    document.getElementById("harga").textContent = hargaFormatted;
+
+                    const date = new Date(selectedData.tanggal);
+                    const tanggalFormatted = date.toLocaleDateString('id-ID', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric'
                     });
-                });
+                    document.getElementById("tanggal").textContent = tanggalFormatted;
+                }
+            });
         });
+
+    // Check if the "Laku" input exceeds the "jumlahStok"
+    const lakuInput = document.getElementById("laku");
+    const lakuError = document.getElementById("lakuError");
+
+    lakuInput.addEventListener("input", function() {
+        if (parseInt(lakuInput.value) > jumlahStok) {
+            // Show the error message and add red border
+            lakuError.classList.remove("hidden");
+            lakuInput.classList.add("border-red-500");
+        } else {
+            // Hide the error message and remove red border if within limit
+            lakuError.classList.add("hidden");
+            lakuInput.classList.remove("border-red-500");
+        }
     });
+});
+
+
+
+
 
     document.getElementById("show-form-btn").addEventListener("click", function() {
         // Tampilkan form dengan animasi naik

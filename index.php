@@ -36,3 +36,5 @@ if ($request == '' || $request == '/login') {
     http_response_code(404);
     echo "404 - Page Not Found";
 }
+
+
