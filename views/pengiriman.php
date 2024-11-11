@@ -331,20 +331,13 @@ document.addEventListener("DOMContentLoaded", function () {
     function updatePriceDisplay() {
         const increasePercentage = parseFloat(diskonSelect.options[diskonSelect.selectedIndex].text) || 0;
 
-        // Display the selected percentage
         persentaseDisplay.textContent = `${increasePercentage}%`;
-
-        // Calculate increased price with the selected percentage
         let increasedPrice = originalPrice * (1 + increasePercentage / 100);
-
-        // Round to nearest 500
         increasedPrice = roundToNearest500(increasedPrice);
 
-        // Display the increased price
         hargaAfterDiskonDisplay.textContent = `Rp. ${increasedPrice.toLocaleString()}`;
     }
 
-    // Function to round to the nearest 500
     function roundToNearest500(price) {
         return Math.round(price / 500) * 500;
     }

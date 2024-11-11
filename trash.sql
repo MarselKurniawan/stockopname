@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Nov 11, 2024 at 06:59 PM
+-- Generation Time: Nov 06, 2024 at 06:55 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -147,7 +147,6 @@ INSERT INTO `pabrik` (`id_pabrik`, `produk_id`, `toko_id`, `hasil_roti`, `nomina
 
 CREATE TABLE `pengiriman` (
   `id` int(11) NOT NULL,
-  `id_pengiriman` int(11) NOT NULL,
   `toko_id` int(11) DEFAULT NULL,
   `produk_id` int(11) DEFAULT NULL,
   `jumlah` int(11) DEFAULT NULL,
@@ -160,15 +159,14 @@ CREATE TABLE `pengiriman` (
 -- Dumping data for table `pengiriman`
 --
 
-INSERT INTO `pengiriman` (`id`, `id_pengiriman`, `toko_id`, `produk_id`, `jumlah`, `harga`, `tanggal`, `created_at`) VALUES
-(3, 111, 1, 39, 132, 12300.00, '2024-10-03', '2024-10-28 15:16:58'),
-(7, 112, 2, 21, 156, 2300.00, '2024-12-25', '2024-11-01 19:40:16'),
-(8, 113, 1, 50, 156, 8210.00, '2024-12-25', '2024-11-01 19:41:17'),
-(9, 114, 1, 19, 65, 1500.00, '2024-10-15', '2024-11-02 03:48:56'),
-(10, 115, 3, 29, 12, 2500.00, '2025-03-21', '2024-11-02 06:31:27'),
-(11, 116, 2, 19, 12, 22000.00, '2024-07-11', '2024-11-06 17:52:35'),
-(12, 117, 1, 20, 10, 13500.00, '2024-11-07', '2024-11-06 17:54:44'),
-(13, 5345, 1, 18, 10, 10500.00, '2024-11-11', '2024-11-11 15:35:34');
+INSERT INTO `pengiriman` (`id`, `toko_id`, `produk_id`, `jumlah`, `harga`, `tanggal`, `created_at`) VALUES
+(3, 1, 39, 132, 12300.00, '2024-10-03', '2024-10-28 15:16:58'),
+(7, 2, 21, 156, 2300.00, '2024-12-25', '2024-11-01 19:40:16'),
+(8, 1, 50, 156, 8210.00, '2024-12-25', '2024-11-01 19:41:17'),
+(9, 1, 19, 65, 1500.00, '2024-10-15', '2024-11-02 03:48:56'),
+(10, 3, 29, 12, 2500.00, '2025-03-21', '2024-11-02 06:31:27'),
+(11, 2, 19, 12, 22000.00, '2024-07-11', '2024-11-06 17:52:35'),
+(12, 1, 20, 10, 13500.00, '2024-11-07', '2024-11-06 17:54:44');
 
 -- --------------------------------------------------------
 
@@ -296,37 +294,6 @@ INSERT INTO `retur` (`id`, `toko_id`, `produk_id`, `jumlah_retur`, `customer_id`
 -- --------------------------------------------------------
 
 --
--- Table structure for table `stock`
---
-
-CREATE TABLE `stock` (
-  `id` int(11) NOT NULL,
-  `toko_id` int(11) NOT NULL,
-  `produk_id` int(11) NOT NULL,
-  `harga` decimal(10,2) NOT NULL,
-  `stok` int(11) NOT NULL,
-  `sisa` int(11) DEFAULT NULL,
-  `laku` int(11) NOT NULL,
-  `laku_nominal` decimal(10,2) NOT NULL,
-  `tanggal` date NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `stock`
---
-
-INSERT INTO `stock` (`id`, `toko_id`, `produk_id`, `harga`, `stok`, `sisa`, `laku`, `laku_nominal`, `tanggal`) VALUES
-(1, 3, 29, 2500.00, 12, 2, 10, 25000.00, '2024-11-10'),
-(2, 1, 19, 1500.00, 65, 6, 59, 88500.00, '2024-11-10'),
-(3, 1, 19, 1500.00, 65, 0, 65, 97500.00, '2024-11-10'),
-(4, 2, 21, 2300.00, 156, 146, 10, 23000.00, '2024-12-25'),
-(5, 2, 21, 2300.00, 156, 76, 80, 184000.00, '2024-12-25'),
-(6, 2, 21, 2300.00, 156, 144, 12, 27600.00, '2024-12-25'),
-(7, 2, 21, 2300.00, 156, 36, 120, 276000.00, '2024-12-25');
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `stok_keluar`
 --
 
@@ -412,20 +379,6 @@ CREATE TABLE `transaksi` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `users`
---
-
-CREATE TABLE `users` (
-  `id` int(11) NOT NULL,
-  `username` varchar(255) DEFAULT NULL,
-  `email` varchar(255) DEFAULT NULL,
-  `pw` varchar(100) NOT NULL,
-  `level` enum('pabrik','admin') NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
 --
 -- Indexes for dumped tables
 --
@@ -498,14 +451,6 @@ ALTER TABLE `retur`
   ADD KEY `customer_id` (`customer_id`);
 
 --
--- Indexes for table `stock`
---
-ALTER TABLE `stock`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `toko_id` (`toko_id`),
-  ADD KEY `produk_id` (`produk_id`);
-
---
 -- Indexes for table `stok_keluar`
 --
 ALTER TABLE `stok_keluar`
@@ -533,12 +478,6 @@ ALTER TABLE `transaksi`
   ADD PRIMARY KEY (`id`),
   ADD KEY `toko_id` (`toko_id`),
   ADD KEY `customer_id` (`customer_id`);
-
---
--- Indexes for table `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -572,7 +511,7 @@ ALTER TABLE `pabrik`
 -- AUTO_INCREMENT for table `pengiriman`
 --
 ALTER TABLE `pengiriman`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `penitipan_nota`
@@ -599,12 +538,6 @@ ALTER TABLE `retur`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT for table `stock`
---
-ALTER TABLE `stock`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
-
---
 -- AUTO_INCREMENT for table `stok_keluar`
 --
 ALTER TABLE `stok_keluar`
@@ -626,12 +559,6 @@ ALTER TABLE `toko`
 -- AUTO_INCREMENT for table `transaksi`
 --
 ALTER TABLE `transaksi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `users`
---
-ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --

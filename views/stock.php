@@ -43,46 +43,46 @@ include_once 'interface/header.php';
                         </select>
                     </div>
                    <div class="grid md:grid-cols-2 gap-3 p-2" id="detailPengiriman">
-    <div>
-        <div class="grid space-y-3">
-            <dl class="flex flex-col sm:flex-row gap-x-3 text-sm">
-                <dt class="min-w-36 max-w-[200px] text-gray-500 dark:text-neutral-500">Nama Toko:</dt>
-                <dd class="font-medium text-gray-500">
-                    <span class="block font-semibold" id="namaToko">-</span>
-                </dd>
-            </dl>
-            <dl class="flex flex-col sm:flex-row gap-x-3 text-sm">
-                <dt class="min-w-36 max-w-[200px] text-gray-500 dark:text-neutral-500">Produk:</dt>
-                <dd class="font-medium text-gray-500">
-                    <span class="block font-semibold" id="namaProduk">-</span>
-                </dd>
-            </dl>
-        </div>
-    </div>
+                <div>
+                    <div class="grid space-y-3">
+                        <dl class="flex flex-col sm:flex-row gap-x-3 text-sm">
+                            <dt class="min-w-36 max-w-[200px] text-gray-500 dark:text-neutral-500">Nama Toko:</dt>
+                            <dd class="font-medium text-gray-500">
+                                <span class="block font-semibold" id="namaToko">-</span>
+                            </dd>
+                        </dl>
+                        <dl class="flex flex-col sm:flex-row gap-x-3 text-sm">
+                            <dt class="min-w-36 max-w-[200px] text-gray-500 dark:text-neutral-500">Produk:</dt>
+                            <dd class="font-medium text-gray-500">
+                                <span class="block font-semibold" id="namaProduk">-</span>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
 
-    <div>
-        <div class="grid space-y-3">
-            <dl class="flex flex-col sm:flex-row gap-x-3 text-sm">
-                <dt class="min-w-36 max-w-[200px] text-gray-500 dark:text-neutral-500">Jumlah Stok:</dt>
-                <dd class="font-medium text-gray-500">
-                    <span id="jumlahStok">-</span>
-                </dd>
-            </dl>
-            <dl class="flex flex-col sm:flex-row gap-x-3 text-sm">
-                <dt class="min-w-36 max-w-[200px] text-gray-500 dark:text-neutral-500">Harga:</dt>
-                <dd class="font-medium text-gray-500">
-                    <span id="harga">-</span>
-                </dd>
-            </dl>
-            <dl class="flex flex-col sm:flex-row gap-x-3 text-sm">
-                <dt class="min-w-36 max-w-[200px] text-gray-500 dark:text-neutral-500">Tanggal:</dt>
-                <dd class="font-medium text-gray-500">
-                    <span id="tanggal">-</span>
-                </dd>
-            </dl>
-        </div>
-    </div>
-</div>
+                <div>
+                    <div class="grid space-y-3">
+                        <dl class="flex flex-col sm:flex-row gap-x-3 text-sm">
+                            <dt class="min-w-36 max-w-[200px] text-gray-500 dark:text-neutral-500">Jumlah Stok:</dt>
+                            <dd class="font-medium text-gray-500">
+                                <span id="jumlahStok">-</span>
+                            </dd>
+                        </dl>
+                        <dl class="flex flex-col sm:flex-row gap-x-3 text-sm">
+                            <dt class="min-w-36 max-w-[200px] text-gray-500 dark:text-neutral-500">Harga:</dt>
+                            <dd class="font-medium text-gray-500">
+                                <span id="harga">-</span>
+                            </dd>
+                        </dl>
+                        <dl class="flex flex-col sm:flex-row gap-x-3 text-sm">
+                            <dt class="min-w-36 max-w-[200px] text-gray-500 dark:text-neutral-500">Tanggal:</dt>
+                            <dd class="font-medium text-gray-500">
+                                <span id="tanggalPengiriman">-</span>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
 
 
                 </div>
@@ -195,6 +195,15 @@ include_once 'interface/header.php';
                                     </div>
                                 </th>
 
+                                 <th scope="col" class="px-6 py-3 text-start">
+                                    <div class="flex items-center gap-x-2">
+                                        <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
+                                            Sisa
+                                        </span>
+                                    </div>
+                                </th>
+
+
                                 <th scope="col" class="px-6 py-3 text-start">
                                     <div class="flex items-center gap-x-2">
                                         <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
@@ -268,172 +277,136 @@ include_once 'interface/header.php';
 
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // Handle form submission
-        document.getElementById("addStockForm").addEventListener("submit", function(e) {
-            e.preventDefault();
 
-            // Get the form data
-            const csrf_token = document.getElementById("csrf_token").value;
-            const cityId = document.getElementById("pengirimanSelect").value;
-            const storeId = document.getElementById("storeSelect").value;
-            const productId = document.getElementById("productSelect").value;
-            const harga = document.getElementById("harga").value;
-            const tanggal = document.getElementById("tanggal").value;
-            const jumlah = document.getElementById("jumlah").value;
+    function showNotification(message) {
+            const notification = document.getElementById("notification");
+            const notificationLabel = document.getElementById("hs-soft-color-success-label");
 
-            // Prepare data to send
-            const formData = {
-                csrf_token: csrf_token,
-                city_id: cityId,
-                store_id: storeId,
-                product_id: productId,
-                harga: harga,
-                tanggal: tanggal,
-                jumlah: jumlah
-            };
+            notificationLabel.textContent = "Sukses!"; // Ubah teks notifikasi
+            notification.innerHTML += ` ${message}`; // Tambahkan pesan
+            notification.classList.remove("hidden"); // Tampilkan notifikasi
 
-            // Send data to addStock.php
-            fetch("/stockopname/api/addPengiriman.php", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(formData)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') { // Pastikan 'success' sesuai dengan format dari API
-                        alert("Data saved successfully!");
-                    } else {
-                        alert("Failed to save data. " + (data.message || "Unknown error occurred."));
-                    }
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                    alert("An error occurred while saving data.");
-                });
-        });
-    });
-    document.addEventListener("DOMContentLoaded", function() {
-        const productSelect = document.getElementById("productSelect");
-        const diskonSelect = document.getElementById("diskonSelect");
-        const hargaAwalDisplay = document.querySelector(".harga-awal");
-        const hargaAfterDiskonDisplay = document.querySelector(".harga-after-diskon .text-sm");
-        const persentaseDisplay = document.querySelector(".persentas span");
-
-        let originalPrice = 0;
-
-        // Load products when page loads
-        fetch("/stockopname/api/products_select.php")
-            .then(response => response.json())
-            .then(data => {
-                data.forEach(product => {
-                    let option = document.createElement("option");
-                    option.value = product.id;
-                    option.text = `${product.display_name} - Rp. ${parseInt(product.harga).toLocaleString()}`;
-                    option.dataset.harga = product.harga;
-                    productSelect.add(option);
-                });
-            });
-
-        // Event listener for product selection
-        productSelect.addEventListener("change", function() {
-            const selectedOption = productSelect.options[productSelect.selectedIndex];
-            originalPrice = parseFloat(selectedOption.dataset.harga || 0);
-
-            // Display original price
-            hargaAwalDisplay.textContent = `Rp. ${originalPrice.toLocaleString()}`;
-            updatePriceDisplay();
-        });
-
-        // Event listener for discount selection
-        diskonSelect.addEventListener("change", function() {
-            updatePriceDisplay();
-        });
-
-        function updatePriceDisplay() {
-            const increasePercentage = parseFloat(diskonSelect.options[diskonSelect.selectedIndex].text) || 0;
-
-            // Display the selected percentage
-            persentaseDisplay.textContent = `${increasePercentage}%`;
-
-            // Calculate increased price with the selected percentage
-            let increasedPrice = originalPrice * (1 + increasePercentage / 100);
-
-            // Round to nearest 500
-            increasedPrice = roundToNearest500(increasedPrice);
-
-            // Display the increased price
-            hargaAfterDiskonDisplay.textContent = `Rp. ${increasedPrice.toLocaleString()}`;
+            // Sembunyikan notifikasi setelah 3 detik dan refresh halaman
+            setTimeout(() => {
+                notification.classList.add("hidden");
+                location.reload(); // Refresh halaman
+            }, 3000);
         }
-
-        // Function to round to the nearest 500
-        function roundToNearest500(price) {
-            return Math.round(price / 500) * 500;
-        }
-    });
-
-
 document.addEventListener("DOMContentLoaded", function() {
-    let jumlahStok = 0; // To store the stock amount
-
-    // Fetch pengiriman data and populate the select dropdown
-    fetch("/stockopname/api/selectPengiriman.php")
-        .then(response => response.json())
-        .then(data => {
-            let pengirimanSelect = document.getElementById("pengirimanSelect");
-            data.forEach(item => {
-                let option = document.createElement("option");
-                option.value = item.id;
-                option.text = item.nama_toko;
-                pengirimanSelect.add(option);
-            });
-
-            pengirimanSelect.addEventListener("change", function() {
-                const selectedId = pengirimanSelect.value;
-                const selectedData = data.find(item => item.id == selectedId);
-                if (selectedData) {
-                    jumlahStok = selectedData.jumlah; // Update the jumlahStok variable
-
-                    document.getElementById("namaToko").textContent = selectedData.nama_toko;
-                    document.getElementById("namaProduk").textContent = selectedData.nama_produk;
-                    document.getElementById("jumlahStok").textContent = jumlahStok;
-
-                    const hargaFormatted = new Intl.NumberFormat('id-ID', {
-                        style: 'currency',
-                        currency: 'IDR',
-                        minimumFractionDigits: 0
-                    }).format(selectedData.harga);
-                    document.getElementById("harga").textContent = hargaFormatted;
-
-                    const date = new Date(selectedData.tanggal);
-                    const tanggalFormatted = date.toLocaleDateString('id-ID', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric'
-                    });
-                    document.getElementById("tanggal").textContent = tanggalFormatted;
-                }
-            });
-        });
-
-    // Check if the "Laku" input exceeds the "jumlahStok"
+    const pengirimanSelect = document.getElementById("pengirimanSelect");
+    const namaToko = document.getElementById("namaToko");
+    const namaProduk = document.getElementById("namaProduk");
+    const jumlahStokDisplay = document.getElementById("jumlahStok");
+    const hargaDisplay = document.getElementById("harga");
+    const tanggalDisplay = document.getElementById("tanggal");
     const lakuInput = document.getElementById("laku");
     const lakuError = document.getElementById("lakuError");
 
+    let pengirimanData = []; // Declare variable to hold fetched data
+
+    // Fetch pengiriman data from the API
+    fetch("/stockopname/api/selectPengiriman.php")
+        .then(response => response.json())
+        .then(data => {
+            console.log(data); // Log data to ensure it's correct
+            pengirimanData = data; // Save all data in the global variable
+
+            // Add a default option to prompt user to select
+            let defaultOption = document.createElement("option");
+            defaultOption.text = "Select Pengiriman";
+            defaultOption.disabled = true;
+            defaultOption.selected = true;
+            pengirimanSelect.add(defaultOption);
+
+            // Populate dropdown with options
+            data.forEach(item => {
+                let option = document.createElement("option");
+                option.value = item.id_pengiriman; // Use id_pengiriman for option value
+                option.text = `${item.nama_toko}`; // Display toko name (you can add more details if needed)
+                pengirimanSelect.add(option);
+            });
+
+            // Event listener for selecting pengiriman
+            pengirimanSelect.addEventListener("change", function() {
+                const selectedId = pengirimanSelect.value;
+                const selectedData = pengirimanData.find(item => item.id_pengiriman == selectedId);
+
+                if (selectedData) {
+                    // Sum up total prices for the selected store (without multiplying by quantity)
+                    let totalPrice = parseFloat(selectedData.harga) * parseInt(selectedData.jumlah); // Price * Quantity
+
+                    // Display store and aggregated product details
+                    namaToko.textContent = selectedData.nama_toko;
+                    namaProduk.textContent = selectedData.nama_produk;
+                    jumlahStokDisplay.textContent = selectedData.jumlah; // Display the quantity of the product
+                    hargaDisplay.textContent = selectedData.harga; // Display total price, rounded to 2 decimal places
+
+                    // Format date to DD-MM-YYYY (for the first product or any product)
+                    const date = new Date(selectedData.tanggal);
+                    const tanggalFormatted = `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getFullYear()}`;
+                    tanggalDisplay.textContent = tanggalFormatted;
+                }
+            });
+        })
+        .catch(error => console.error("Error fetching pengiriman data:", error));
+
+    // Validate 'laku' input
     lakuInput.addEventListener("input", function() {
-        if (parseInt(lakuInput.value) > jumlahStok) {
-            // Show the error message and add red border
-            lakuError.classList.remove("hidden");
-            lakuInput.classList.add("border-red-500");
-        } else {
-            // Hide the error message and remove red border if within limit
-            lakuError.classList.add("hidden");
-            lakuInput.classList.remove("border-red-500");
+        const selectedId = pengirimanSelect.value;
+        const selectedData = pengirimanData.find(item => item.id_pengiriman == selectedId);
+
+        if (selectedData) {
+            // Calculate the total available quantity for the selected product
+            const totalQuantity = parseInt(selectedData.jumlah);
+            if (parseInt(lakuInput.value) > totalQuantity) {
+                lakuError.classList.remove("hidden");
+                lakuInput.classList.add("border-red-500");
+                lakuError.textContent = "Jumlah laku tidak boleh lebih dari jumlah stok!";
+            } else {
+                lakuError.classList.add("hidden");
+                lakuInput.classList.remove("border-red-500");
+            }
+        }
+    });
+
+    // Handle form submission
+    document.getElementById("addStockForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        const selectedId = pengirimanSelect.value;
+        const selectedData = pengirimanData.find(item => item.id_pengiriman == selectedId);
+
+        if (selectedData) {
+            const formData = {
+                csrf_token: document.getElementById("csrf_token").value,
+                id_pengiriman: selectedData.id_pengiriman, // Use id_pengiriman
+                laku: lakuInput.value,
+                tanggal: selectedData.tanggal // Use the selected product's date
+            };
+
+            fetch("/stockopname/api/addStock.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showNotification(data.message);
+                } else {
+                    alert("Gagal menyimpan data. " + (data.message || "Terjadi kesalahan."));
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Terjadi kesalahan saat menyimpan data.");
+            });
         }
     });
 });
+
+
+
 
 
 
@@ -463,7 +436,7 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
 
-        fetch(`/stockopname/api/pesngiriman.php?csrf_token=${csrfToken}`, {
+        fetch(`/stockopname/api/stock.php?csrf_token=${csrfToken}`, {
                 method: 'GET'
             })
             .then(response => {
@@ -481,6 +454,11 @@ document.addEventListener("DOMContentLoaded", function() {
                         currency: 'IDR'
                     }).format(item.harga);
 
+                    let lakuFormatted = new Intl.NumberFormat('id-ID', {
+                        style: 'currency',
+                        currency: 'IDR'
+                    }).format(item.laku_nominal);
+
                     // Memformat tanggal ke format tanggal bulan tahun
                     let tanggalFormatted = new Date(item.tanggal).toLocaleDateString('id-ID', {
                         day: 'numeric',
@@ -496,7 +474,10 @@ document.addEventListener("DOMContentLoaded", function() {
                     <td class="p-6 text-sm">${item.nama_toko}</td>
                     <td class="p-6 text-sm">${item.nama_produk}</td>
                     <td class="p-6 text-sm">${hargaFormatted}</td>
-                    <td class="p-6 text-sm">${item.jumlah}</td>
+                    <td class="p-6 text-sm">${item.stok}</td>
+                    <td class="p-6 text-sm">${item.laku}</td>
+                    <td class="p-6 text-sm">${item.sisa}</td>
+                    <td class="p-6 text-sm">${lakuFormatted}</td>
                     <td class="p-6 text-sm">${tanggalFormatted}</td>
 
                 </tr>`;

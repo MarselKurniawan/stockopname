@@ -14,6 +14,99 @@ include_once 'interface/header.php';
 ?>
 <!-- Pastikan ada tempat untuk menyimpan token CSRF -->
 <!-- Card Section -->
+<div class="max-w-8xl px-2 py-4 sm:px-6 lg:px-8 lg:py-14 mx-auto " id="form-div">
+  <!-- Card -->
+  <div class="bg-white rounded-xl shadow p-4 sm:p-7">
+    <div class="text-center mb-8">
+      <h2 class="text-2xl md:text-3xl font-bold text-gray-800">
+        Input Barang 
+      </h2>
+      <p class="text-sm text-gray-600">
+        
+      </p>
+    </div>
+<form id="addStockForm" class="space-y-3">
+    <input type="hidden" id="csrf_token" value="<?php echo generate_csrf_token(); ?>">
+
+    <!-- Toko Section -->
+    <div class="py-6 first:pt-0 last:pb-0 border-t first:border-transparent border-gray-200">
+        <label class="inline-block text-sm font-medium">Toko</label>  
+        <div class="mt-2 space-y-3">
+            <div class="flex flex-col sm:flex-row gap-3">              
+                <select id="produkSelect" class="py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500">
+                    <option selected>Select Produk</option>
+                </select>
+                
+                <select id="bakerSelect" class="py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500">
+                    <option selected>Select Pembuat</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    
+    <!-- SO Detail Section -->
+    <div class="py-6 first:pt-0 last:pb-0 border-t first:border-transparent border-gray-200">
+        <label class="inline-block text-sm font-medium">SO Detail</label>
+        <div class="mt-2 space-y-3">
+            <div class="flex flex-col sm:flex-row gap-3">
+                <input type="text" id="jumlah" name="jumlah" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500" placeholder="Jumlah">
+                <input type="date" id="tanggal" class="py-2 px-3 pe-11 block w-80 border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500" placeholder="Tanggal Masuk">
+            </div>
+
+           <div class="mb-4">
+            <!-- Select -->
+            <select id="multiple-with-conditional-counter-select" multiple="" data-hs-select='{
+              "placeholder": "Select multiple options...",
+              "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+              "toggleClasses": "hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50 relative py-3 ps-4 pe-9 flex gap-x-2 text-nowrap w-full cursor-pointer bg-white border border-gray-200 rounded-lg text-start text-sm focus:outline-none focus:ring-2 focus:ring-blue-500",
+              "toggleSeparators": {
+                "betweenItemsAndCounter": "&"
+              },
+              "toggleCountText": "selected",
+              "toggleCountTextMinItems": 3,
+              "toggleCountTextMode": "nItemsAndCount",
+              "dropdownClasses": "mt-2 z-50 w-full max-h-72 p-1 space-y-0.5 bg-white border border-gray-200 rounded-lg overflow-hidden overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300",
+              "optionClasses": "py-2 px-4 w-full text-sm text-gray-800 cursor-pointer hover:bg-gray-100 rounded-lg focus:outline-none focus:bg-gray-100",
+              "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"hidden hs-selected:block\"><svg class=\"shrink-0 size-3.5 text-blue-600 \" xmlns=\"http:.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"20 6 9 17 4 12\"/></svg></span></div>",
+              "extraMarkup": "<div class=\"absolute top-1/2 end-3 -translate-y-1/2\"><svg class=\"shrink-0 size-3.5 text-gray-500 \" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"/><path d=\"m7 9 5-5 5 5\"/></svg></div>"
+            }' class="hidden">
+              <option value="">Choose</option>
+              <option>Name</option>
+              <option>Email address</option>
+              <option>Description</option>
+              <option>User ID</option>
+              <option>Address</option>
+              <option>City</option>
+              <option>Country</option>
+            </select>
+            <!-- End Select -->
+          </div>
+
+          <div class="flex flex-wrap gap-2">
+            <button type="button" id="multiple-with-conditional-counter-trigger-clear" class="py-1 px-2 inline-flex items-center gap-x-1 text-sm rounded-lg border border-gray-200 bg-white text-gray-800 hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none">
+              <svg class="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 6 6 18"></path>
+                <path d="m6 6 12 12"></path>
+              </svg>
+              Clear
+            </button>
+          </div>
+        </div>
+    </div>
+
+    <!-- Submit Buttons -->
+    <div class="mt-5 flex justify-end gap-x-2">
+        <button type="button" class="py-2 px-3 text-sm font-medium rounded-lg border bg-white text-gray-800 hover:bg-gray-50">Cancel</button>
+        <button type="submit" class="py-2 px-3 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700">Save changes</button>
+    </div>
+</form>
+
+  <!-- </div> -->
+  </div>
+  <!-- End Card -->
+</div>
+<!-- End Card Section -->
+<!-- Card Section -->
 <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-2 mx-auto">
   <!-- Grid -->
   <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
@@ -57,7 +150,7 @@ include_once 'interface/header.php';
 
 
 <!-- Table Section -->
-<div class="max-w-[85rem] px py-4 sm:px-6 lg:px-8 lg:py-4 mx-auto">
+<div class="max-w-[85rem] py-4 sm:px-6 lg:px-8 lg:py-4 mx-auto">
   <!-- Card -->
   <div class="flex flex-col">
     <div class="-m-1.5 overflow-x-auto">
@@ -204,6 +297,52 @@ include_once 'interface/header.php';
 
 
 <script>
+
+document.addEventListener("DOMContentLoaded", function () {
+    // Load products when the page loads
+    loadProducts();
+
+    // Event listener for when the product is changed
+    document.getElementById("produkSelect").addEventListener("change", function () {
+        console.log("Selected product ID:", this.value);
+    });
+});
+
+function loadProducts() {
+    const productSelect = document.getElementById("produkSelect");
+
+    // Clear existing options to avoid duplicates
+    productSelect.innerHTML = '<option selected>Select Produk</option>';
+
+    fetch("http://localhost/stockopname/api/products_select.php")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Network response was not ok: ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Fetched data:", data); // Check the fetched data
+
+            if (!Array.isArray(data)) {
+                console.error("Expected an array but received:", data);
+                return;
+            }
+
+            data.forEach(product => {
+                let option = document.createElement("option");
+                option.value = product.id;
+                option.text = product.display_name;
+                productSelect.add(option);
+            });
+        })
+        .catch(error => {
+            console.error("Error fetching products:", error);
+        });
+}
+
+
+  
 document.addEventListener("DOMContentLoaded", function () {
     fetch("https://localhost/stockopname/api/selectDates.php")
         .then(response => response.json())
