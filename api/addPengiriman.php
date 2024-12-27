@@ -38,57 +38,81 @@ if ($input === null) {
 // Retrieve data from JSON
 $city_id = $input['city_id'] ?? null;
 $store_id = $input['store_id'] ?? null;
-$product_id = $input['product_id'] ?? null;
-$harga = $input['harga'] ?? null;
 $tanggal = $input['tanggal'] ?? null;
-$jumlah = $input['jumlah'] ?? null;
+$products = $input['products'] ?? [];
 
 // Validate data
-if (empty($city_id) || empty($store_id) || empty($product_id) || empty($harga) || empty($tanggal) || empty($jumlah)) {
+if (empty($city_id) || empty($store_id) || empty($tanggal) || empty($products)) {
     echo json_encode(['status' => 'error', 'message' => 'All fields are required']);
     exit;
 }
 
-// Function to generate a unique 4-digit id_pengiriman
-function generateUniquePengirimanId($conn) {
+function generateUniquePengirimanId($conn)
+{
     do {
         $id_pengiriman = random_int(1000, 9999);
         $query = "SELECT COUNT(*) FROM pengiriman WHERE id_pengiriman = ?";
         $stmt = $conn->prepare($query);
+
+        if (!$stmt) {
+            throw new Exception('Query preparation failed: ' . $conn->error);
+        }
+
         $stmt->bind_param('i', $id_pengiriman);
         $stmt->execute();
         $stmt->bind_result($count);
         $stmt->fetch();
         $stmt->close();
+
     } while ($count > 0);
+
     return $id_pengiriman;
 }
 
-// Function to insert data into pengiriman table
-function insertPengirimanData($conn, $store_id, $product_id, $harga, $tanggal, $jumlah) {
-    $id_pengiriman = generateUniquePengirimanId($conn); // Generate unique ID
+// Start transaction
+$conn->begin_transaction();
 
-    $query = "INSERT INTO pengiriman (id_pengiriman, toko_id, produk_id, harga, tanggal, jumlah) VALUES (?, ?, ?, ?, ?, ?)";
-    $stmt = $conn->prepare($query);
+try {
+    // Generate a unique ID pengiriman for the whole batch
+    $id_pengiriman = generateUniquePengirimanId($conn);
 
-    if (!$stmt) {
-        return ['status' => 'error', 'message' => 'Query preparation failed: ' . $conn->error];
+    foreach ($products as $product) {
+        $product_id = $product['product_id'] ?? null;
+        $harga = $product['harga'] ?? null;
+        $jumlah = $product['jumlah'] ?? null;
+
+        // Validate product data
+        if (empty($product_id) || empty($harga) || empty($jumlah)) {
+            throw new Exception('Product data is incomplete');
+        }
+
+        // Insert each product into the pengiriman table
+        $query = "INSERT INTO pengiriman (id_pengiriman, toko_id, produk_id, harga, tanggal, jumlah) 
+                  VALUES (?, ?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($query);
+
+        if (!$stmt) {
+            throw new Exception('Query preparation failed: ' . $conn->error);
+        }
+
+        $stmt->bind_param('iiidsi', $id_pengiriman, $store_id, $product_id, $harga, $tanggal, $jumlah);
+
+        if (!$stmt->execute()) {
+            throw new Exception('Failed to execute query: ' . $stmt->error);
+        }
+
+        $stmt->close();
     }
 
-    $stmt->bind_param('iiissi', $id_pengiriman, $store_id, $product_id, $harga, $tanggal, $jumlah);
+    // Commit transaction
+    $conn->commit();
+    echo json_encode(['status' => 'success', 'message' => 'Pengiriman added successfully']);
 
-    if ($stmt->execute()) {
-        $stmt->close();
-        return ['status' => 'success', 'message' => 'Stock added successfully'];
-    } else {
-        $stmt->close();
-        return ['status' => 'error', 'message' => 'Failed to add stock: ' . $stmt->error];
-    }
+} catch (Exception $e) {
+    // Rollback transaction in case of error
+    $conn->rollback();
+    echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
 }
-
-// Insert data into the pengiriman table and return response
-$response = insertPengirimanData($conn, $store_id, $product_id, $harga, $tanggal, $jumlah);
-echo json_encode($response);
 
 // Close database connection
 $conn->close();

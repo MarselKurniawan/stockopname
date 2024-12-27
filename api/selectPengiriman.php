@@ -7,12 +7,13 @@ require_once '../core/v2/config.php';
 $conn = db_connect();
 
 try {
-    // Query to get combined data from pengiriman, toko, and produk
+    // Query untuk mendapatkan semua data pengiriman kecuali yang memiliki id_pengiriman_checker yang sama dengan id_pengiriman
     $stmt = $conn->prepare("
         SELECT 
             pengiriman.id, 
             pengiriman.id_pengiriman, 
             pengiriman.toko_id,
+            pengiriman.produk_id,
             toko.nama_toko,
             produk.nama_produk,
             pengiriman.harga,
@@ -28,6 +29,10 @@ try {
             toko ON pengiriman.toko_id = toko.id 
         JOIN 
             produk ON pengiriman.produk_id = produk.id
+        LEFT JOIN 
+            stock ON pengiriman.id = stock.id_pengiriman_checker
+        WHERE 
+            (stock.id_pengiriman_checker IS NULL OR stock.id_pengiriman_checker != pengiriman.id)
     ");
     $stmt->execute();
     $result = $stmt->get_result();
@@ -35,24 +40,29 @@ try {
     $pengirimanData = [];
 
     while ($row = $result->fetch_assoc()) {
-        // Choose the available packaging size
+        // Pilih ukuran kemasan yang tersedia
         $packaging = $row['ukuran_stoples'] ?: $row['ukuran_mika'] ?: $row['ukuran_paket'];
 
-        // Only add the product if there's a packaging size
+        // Hanya tambahkan produk jika ada ukuran kemasan
         if ($packaging) {
             $pengirimanData[] = [
+                'id' => $row['id'],
+
                 'id_pengiriman' => $row['id_pengiriman'],
                 'nama_toko' => $row['nama_toko'],
                 'nama_produk' => "{$row['nama_produk']} ({$row['kemasan']} - {$packaging})",
                 'harga' => $row['harga'],
                 'jumlah' => $row['jumlah'],
-                'tanggal' => $row['tanggal']
+                'tanggal' => $row['tanggal'],
+                'produk_id' => $row['produk_id'],
+                'toko_id' => $row['toko_id'],
             ];
         }
     }
 
-    // Output the result as JSON
+    // Output hasil sebagai JSON
     echo json_encode($pengirimanData);
 } catch (Exception $e) {
-    echo json_encode(['error' => 'Failed to fetch data']);
+    echo json_encode(['error' => 'Gagal mengambil data']);
 }
+?>

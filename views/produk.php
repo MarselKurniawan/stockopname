@@ -148,7 +148,7 @@ include_once 'interface/header.php';
       return;
     }
 
-    fetch(`https://localhost/stockopname/api/get_produk.php?csrf_token=${csrfToken}`, {
+    fetch(`/stockopname/api/get_produk.php?csrf_token=${csrfToken}`, {
         method: 'GET'
       })
       .then(response => {
@@ -179,7 +179,6 @@ include_once 'interface/header.php';
                     <td class="p-6 text-sm">${item.nama_produk}</td>
                     <td class="p-6 text-sm">${item.kemasan}</td>
                     <td class="p-6 text-sm">${item.ukuran_stoples}</td>
-                    <td class="p-6 text-sm">${item.stock}</td>
                     <td class="p-6 text-sm">${hargaFormatted}</td>
                 </tr>`;
           tableBody.insertAdjacentHTML('beforeend', row); // Menambahkan baris baru ke tabel

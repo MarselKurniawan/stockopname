@@ -19,89 +19,66 @@ include_once 'interface/header.php';
   <div class="bg-white rounded-xl shadow p-4 sm:p-7">
     <div class="text-center mb-8">
       <h2 class="text-2xl md:text-3xl font-bold text-gray-800">
-        Input Barang 
+        Input Barang
       </h2>
       <p class="text-sm text-gray-600">
-        
+
       </p>
     </div>
-<form id="addStockForm" class="space-y-3">
-    <input type="hidden" id="csrf_token" value="<?php echo generate_csrf_token(); ?>">
+    <form id="addStockForm" class="space-y-3">
+      <input type="hidden" id="csrf_token" value="<?php echo generate_csrf_token(); ?>">
 
-    <!-- Toko Section -->
-    <div class="py-6 first:pt-0 last:pb-0 border-t first:border-transparent border-gray-200">
-        <label class="inline-block text-sm font-medium">Toko</label>  
+      <!-- Toko Section -->
+      <div class="py-6 first:pt-0 last:pb-0 border-t first:border-transparent border-gray-200">
+        <label class="inline-block text-sm font-medium">Toko</label>
         <div class="mt-2 space-y-3">
-            <div class="flex flex-col sm:flex-row gap-3">              
-                <select id="produkSelect" class="py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500">
-                    <option selected>Select Produk</option>
-                </select>
-                
-                <select id="bakerSelect" class="py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500">
-                    <option selected>Select Pembuat</option>
-                </select>
-            </div>
+          <div class="flex flex-col sm:flex-row gap-3">
+            <select id="produkSelect"
+              class="py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500">
+              <option selected>Select Produk</option>
+            </select>
+
+            <select id="bakerSelect"
+              class="py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500">
+              <option selected>Select Pembuat</option>
+            </select>
+          </div>
         </div>
-    </div>
-    
-    <!-- SO Detail Section -->
-    <div class="py-6 first:pt-0 last:pb-0 border-t first:border-transparent border-gray-200">
+      </div>
+
+      <!-- SO Detail Section -->
+      <div class="py-6 first:pt-0 last:pb-0 border-t first:border-transparent border-gray-200">
         <label class="inline-block text-sm font-medium">SO Detail</label>
         <div class="mt-2 space-y-3">
-            <div class="flex flex-col sm:flex-row gap-3">
-                <input type="text" id="jumlah" name="jumlah" class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500" placeholder="Jumlah">
-                <input type="date" id="tanggal" class="py-2 px-3 pe-11 block w-80 border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500" placeholder="Tanggal Masuk">
-            </div>
-
-           <div class="mb-4">
-            <!-- Select -->
-            <select id="multiple-with-conditional-counter-select" multiple="" data-hs-select='{
-              "placeholder": "Select multiple options...",
-              "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
-              "toggleClasses": "hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50 relative py-3 ps-4 pe-9 flex gap-x-2 text-nowrap w-full cursor-pointer bg-white border border-gray-200 rounded-lg text-start text-sm focus:outline-none focus:ring-2 focus:ring-blue-500",
-              "toggleSeparators": {
-                "betweenItemsAndCounter": "&"
-              },
-              "toggleCountText": "selected",
-              "toggleCountTextMinItems": 3,
-              "toggleCountTextMode": "nItemsAndCount",
-              "dropdownClasses": "mt-2 z-50 w-full max-h-72 p-1 space-y-0.5 bg-white border border-gray-200 rounded-lg overflow-hidden overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300",
-              "optionClasses": "py-2 px-4 w-full text-sm text-gray-800 cursor-pointer hover:bg-gray-100 rounded-lg focus:outline-none focus:bg-gray-100",
-              "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"hidden hs-selected:block\"><svg class=\"shrink-0 size-3.5 text-blue-600 \" xmlns=\"http:.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"20 6 9 17 4 12\"/></svg></span></div>",
-              "extraMarkup": "<div class=\"absolute top-1/2 end-3 -translate-y-1/2\"><svg class=\"shrink-0 size-3.5 text-gray-500 \" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"/><path d=\"m7 9 5-5 5 5\"/></svg></div>"
-            }' class="hidden">
-              <option value="">Choose</option>
-              <option>Name</option>
-              <option>Email address</option>
-              <option>Description</option>
-              <option>User ID</option>
-              <option>Address</option>
-              <option>City</option>
-              <option>Country</option>
-            </select>
-            <!-- End Select -->
+          <div class="flex flex-col sm:flex-row gap-3">
+            <input type="text" id="jumlah" name="jumlah"
+              class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500"
+              placeholder="Jumlah">
+            <input type="date" id="tanggal"
+              class="py-2 px-3 pe-11 block w-80 border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500"
+              placeholder="Tanggal Masuk">
           </div>
 
-          <div class="flex flex-wrap gap-2">
-            <button type="button" id="multiple-with-conditional-counter-trigger-clear" class="py-1 px-2 inline-flex items-center gap-x-1 text-sm rounded-lg border border-gray-200 bg-white text-gray-800 hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none">
-              <svg class="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M18 6 6 18"></path>
-                <path d="m6 6 12 12"></path>
-              </svg>
-              Clear
-            </button>
+          <div class="flex flex-col sm:flex-row gap-3">
+            <input type="text" id="Jumlah Adonan" name="Jumlah Adonan"
+              class="py-2 px-3 pe-11 block w-lg border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500"
+              placeholder="Jumlah">
+            <p class="text-gray-700 font-bold">Adonan</p>
           </div>
         </div>
-    </div>
+      </div>
 
-    <!-- Submit Buttons -->
-    <div class="mt-5 flex justify-end gap-x-2">
-        <button type="button" class="py-2 px-3 text-sm font-medium rounded-lg border bg-white text-gray-800 hover:bg-gray-50">Cancel</button>
-        <button type="submit" class="py-2 px-3 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700">Save changes</button>
-    </div>
-</form>
+      <!-- Submit Buttons -->
+      <div class="mt-5 flex justify-end gap-x-2">
+        <button type="button"
+          class="py-2 px-3 text-sm font-medium rounded-lg border bg-white text-gray-800 hover:bg-gray-50">Cancel</button>
+        <button type="submit"
+          class="py-2 px-3 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700">Save
+          changes</button>
+      </div>
+    </form>
 
-  <!-- </div> -->
+    <!-- </d -->
   </div>
   <!-- End Card -->
 </div>
@@ -115,36 +92,44 @@ include_once 'interface/header.php';
     <div class="flex flex-col space-x-4 w-full bg-white border shadow-sm rounded-xl" style="width: 60vh !important;">
       <div class="p-4 md:p-5">
         <div class="flex justify-between">
-            <div class="flex items-center gap-x-2">
-          <p class="text-xs uppercase tracking-wide text-gray-500">
-            roti yang dihasilkan
-          </p>
-        </div>
-        <div class="">
-    <div class="m-1 hs-dropdown [--trigger:hover] relative inline-flex">
-        <button id="hs-dropdown-hover-event" type="button" class="hs-dropdown-toggle py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none" aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
-            Select Date
-            <svg class="hs-dropdown-open:rotate-180 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-        </button>
-        <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-60 bg-white shadow-md rounded-lg mt-2 after:h-4 after:absolute after:-bottom-4 after:start-0 after:w-full before:h-4 before:absolute before:-top-4 before:start-0 before:w-full" role="menu" aria-orientation="vertical" aria-labelledby="hs-dropdown-hover-event">
-            <div class="p-1 space-y-0.5">
-                <!-- Date options will be dynamically populated here -->
+          <div class="flex items-center gap-x-2">
+            <p class="text-xs uppercase tracking-wide text-gray-500">
+              roti yang dihasilkan
+            </p>
+          </div>
+          <div class="">
+            <div class="m-1 hs-dropdown [--trigger:hover] relative inline-flex">
+              <button id="hs-dropdown-hover-event" type="button"
+                class="hs-dropdown-toggle py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none"
+                aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
+                Select Date
+                <svg class="hs-dropdown-open:rotate-180 size-4" xmlns="http://www.w3.org/2000/svg" width="24"
+                  height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </button>
+              <div
+                class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-60 bg-white shadow-md rounded-lg mt-2 after:h-4 after:absolute after:-bottom-4 after:start-0 after:w-full before:h-4 before:absolute before:-top-4 before:start-0 before:w-full"
+                role="menu" aria-orientation="vertical" aria-labelledby="hs-dropdown-hover-event">
+                <div class="p-1 space-y-0.5">
+                  <!-- Date options will be dynamically populated here -->
+                </div>
+              </div>
             </div>
-        </div>
-    </div>
-</div>
-        </div>
-        </div>
-        </div>
-        <div class="mt-1 flex items-center gap-x-2">
-          <h3 class="text-xl sm:text-2xl font-medium text-gray-800" id="tableBody">
-            23
-          </h3>
+          </div>
         </div>
       </div>
     </div>
+    <div class="mt-1 flex items-center gap-x-2">
+      <h3 class="text-xl sm:text-2xl font-medium text-gray-800" id="tableBody">
+        23
+      </h3>
+    </div>
   </div>
-  <!-- End Grid -->
+</div>
+</div>
+<!-- End Grid -->
 </div>
 <!-- End Card Section -->
 
@@ -169,8 +154,11 @@ include_once 'interface/header.php';
 
             <div>
               <div class="inline-flex gap-x-2">
-                <a class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none" href="#">
-                  <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <a class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+                  href="#">
+                  <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
                     <path d="M5 12h14" />
                     <path d="M12 5v14" />
                   </svg>
@@ -243,7 +231,7 @@ include_once 'interface/header.php';
                 <th scope="col" class="px-6 py-3 text-start">
                   <div class="flex items-center gap-x-2">
                     <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      
+
                     </span>
                   </div>
                 </th>
@@ -269,16 +257,22 @@ include_once 'interface/header.php';
 
             <div>
               <div class="inline-flex gap-x-2">
-                <button type="button" class="py-1.5 px-2 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-gray-50">
-                  <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <button type="button"
+                  class="py-1.5 px-2 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-gray-50">
+                  <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
                     <path d="m15 18-6-6 6-6" />
                   </svg>
                   Prev
                 </button>
 
-                <button type="button" class="py-1.5 px-2 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-gray-50">
+                <button type="button"
+                  class="py-1.5 px-2 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-gray-50">
                   Next
-                  <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
                     <path d="m9 18 6-6-6-6" />
                   </svg>
                 </button>
@@ -298,78 +292,78 @@ include_once 'interface/header.php';
 
 <script>
 
-document.addEventListener("DOMContentLoaded", function () {
+  document.addEventListener("DOMContentLoaded", function () {
     // Load products when the page loads
     loadProducts();
 
     // Event listener for when the product is changed
     document.getElementById("produkSelect").addEventListener("change", function () {
-        console.log("Selected product ID:", this.value);
+      console.log("Selected product ID:", this.value);
     });
-});
+  });
 
-function loadProducts() {
+  function loadProducts() {
     const productSelect = document.getElementById("produkSelect");
 
     // Clear existing options to avoid duplicates
     productSelect.innerHTML = '<option selected>Select Produk</option>';
 
-    fetch("http://localhost/stockopname/api/products_select.php")
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Network response was not ok: ${response.statusText}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log("Fetched data:", data); // Check the fetched data
+    fetch("/stockopname/api/products_select.php")
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Network response was not ok: ${response.statusText}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log("Fetched data:", data); // Check the fetched data
 
-            if (!Array.isArray(data)) {
-                console.error("Expected an array but received:", data);
-                return;
-            }
+        if (!Array.isArray(data)) {
+          console.error("Expected an array but received:", data);
+          return;
+        }
 
-            data.forEach(product => {
-                let option = document.createElement("option");
-                option.value = product.id;
-                option.text = product.display_name;
-                productSelect.add(option);
-            });
-        })
-        .catch(error => {
-            console.error("Error fetching products:", error);
+        data.forEach(product => {
+          let option = document.createElement("option");
+          option.value = product.id;
+          option.text = product.display_name;
+          productSelect.add(option);
         });
-}
+      })
+      .catch(error => {
+        console.error("Error fetching products:", error);
+      });
+  }
 
 
-  
-document.addEventListener("DOMContentLoaded", function () {
-    fetch("https://localhost/stockopname/api/selectDates.php")
-        .then(response => response.json())
-        .then(data => {
-            const dropdownMenu = document.querySelector(".hs-dropdown-menu .p-1");
 
-            // Populate dropdown with dates
-            data.forEach(dateObj => {
-                let dateLink = document.createElement("a");
-                dateLink.className = "flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100";
-                dateLink.href = "#";
+  document.addEventListener("DOMContentLoaded", function () {
+    fetch("/stockopname/api/selectDates.php")
+      .then(response => response.json())
+      .then(data => {
+        const dropdownMenu = document.querySelector(".hs-dropdown-menu .p-1");
 
-                // Parse the date and format as "9 November 2024"
-                const parsedDate = new Date(dateObj.tanggal);
-                const options = { day: 'numeric', month: 'long', year: 'numeric' };
-                
-                // Check if the date is valid
-                dateLink.textContent = !isNaN(parsedDate) ? parsedDate.toLocaleDateString('id-ID', options) : "Invalid Date";
+        // Populate dropdown with dates
+        data.forEach(dateObj => {
+          let dateLink = document.createElement("a");
+          dateLink.className = "flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100";
+          dateLink.href = "#";
 
-                dropdownMenu.appendChild(dateLink);
-            });
-        })
-        .catch(error => console.error("Error fetching dates:", error));
-});
+          // Parse the date and format as "9 November 2024"
+          const parsedDate = new Date(dateObj.tanggal);
+          const options = { day: 'numeric', month: 'long', year: 'numeric' };
+
+          // Check if the date is valid
+          dateLink.textContent = !isNaN(parsedDate) ? parsedDate.toLocaleDateString('id-ID', options) : "Invalid Date";
+
+          dropdownMenu.appendChild(dateLink);
+        });
+      })
+      .catch(error => console.error("Error fetching dates:", error));
+  });
 
 
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function () {
     const csrfToken = document.getElementById('csrf_token').value;
 
     if (!csrfToken) {
@@ -377,9 +371,9 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    fetch(`https://localhost/stockopname/api/get_pabrik.php?csrf_token=${csrfToken}`, {
-        method: 'GET'
-      })
+    fetch(`/stockopname/api/get_pabrik.php?csrf_token=${csrfToken}`, {
+      method: 'GET'
+    })
       .then(response => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);

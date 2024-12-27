@@ -30,65 +30,79 @@ if ($conn->connect_error) {
 }
 
 // Pastikan data berhasil didekode
-if ($input === null) {
-    echo json_encode(['status' => 'error', 'message' => 'Invalid JSON']);
+if ($input === null || !isset($input['entries']) || empty($input['entries'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Invalid or missing entries']);
     exit;
 }
 
-// Ambil id_pengiriman dari input
-$id_pengiriman = $input['id_pengiriman'] ?? null;
-$laku = $input['laku'] ?? null;
-$tanggal = $input['tanggal'] ?? null;
+// Ambil data entries dari input
+$entries = $input['entries'];
 
-// Validasi data
-if (empty($id_pengiriman) || empty($laku) || empty($tanggal)) {
-    echo json_encode(['status' => 'error', 'message' => 'All fields are required']);
-    exit;
-}
+// Loop untuk proses setiap entry dalam array entries
+foreach ($entries as $entry) {
+    $id_pengiriman = $entry['id_pengiriman'] ?? null;
+    $laku_nominal = $entry['laku_nominal'] ?? null;
+    $tanggal_masuk = $entry['tanggal_masuk'] ?? null;
+    $toko_id = $entry['toko_id'] ?? null;
+    $produk_id = $entry['produk_id'] ?? null;
+    $harga = $entry['harga'] ?? null;
 
-// Ambil data dari tabel pengiriman berdasarkan id_pengiriman
-$query = "SELECT toko_id, produk_id, harga, jumlah FROM pengiriman WHERE id_pengiriman = ?";
-$stmt = $conn->prepare($query);
-$stmt->bind_param('i', $id_pengiriman);
-$stmt->execute();
-$result = $stmt->get_result();
+    // Validasi data
+    if (empty($id_pengiriman) || empty($laku_nominal) || empty($tanggal_masuk)) {
+        echo json_encode(['status' => 'error', 'message' => 'All fields are required']);
+        exit;
+    }
 
-// Cek apakah data ditemukan
-if ($result->num_rows === 0) {
-    echo json_encode(['status' => 'error', 'message' => 'Pengiriman not found']);
-    exit;
-}
+    // Periksa apakah tanggal_masuk ada dan memiliki format yang valid
+    if ($tanggal_masuk && !DateTime::createFromFormat('Y-m-d', $tanggal_masuk)) {
+        echo json_encode(['status' => 'error', 'message' => 'Invalid date format for tanggal_masuk. Expected format: YYYY-MM-DD']);
+        exit;
+    }
 
-$dataPengiriman = $result->fetch_assoc();
-$toko_id = $dataPengiriman['toko_id'];
-$produk_id = $dataPengiriman['produk_id'];
-$harga = $dataPengiriman['harga'];
-$stok = $dataPengiriman['jumlah']; // Jumlah stok sebelum dikurangi
+    // Jika tanggal valid, ubah menjadi format yang benar
+    $tanggal_masuk = date('Y-m-d', strtotime($tanggal_masuk));
 
-// Hitung laku_nominal dan sisa
-$laku_nominal = $harga * $laku;
-$sisa = $stok - $laku; // Jumlah yang tersisa setelah dikurangi laku
+    // Ambil data dari tabel pengiriman berdasarkan id_pengiriman
+    $query = "SELECT toko_id, produk_id, harga, jumlah, id FROM pengiriman WHERE id_pengiriman = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param('i', $id_pengiriman);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-// Siapkan query untuk menambahkan data ke tabel stock
-$queryInsert = "INSERT INTO stock (toko_id, produk_id, harga, stok, laku, laku_nominal, sisa, tanggal) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-$stmtInsert = $conn->prepare($queryInsert);
+    // Cek apakah data ditemukan
+    if ($result->num_rows === 0) {
+        echo json_encode(['status' => 'error', 'message' => 'Pengiriman not found']);
+        exit;
+    }
 
-if (!$stmtInsert) {
-    echo json_encode(['status' => 'error', 'message' => 'Query preparation failed: ' . $conn->error]);
-    exit;
-}
+    $dataPengiriman = $result->fetch_assoc();
+    $stok = $dataPengiriman['jumlah']; // Jumlah stok sebelum dikurangi
+    $id_pengiriman_checker = $dataPengiriman['id']; // Ambil id_pengiriman_checker
 
-// Bind parameter dan eksekusi query
-$stmtInsert->bind_param('iisdiids', $toko_id, $produk_id, $harga, $stok, $laku, $laku_nominal, $sisa, $tanggal);
+    // Siapkan query untuk menambahkan data ke tabel stock
+    $queryInsert = "INSERT INTO stock (toko_id, produk_id, harga, stok, laku_nominal, tanggal, id_pengiriman_checker, id_pengiriman) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    $stmtInsert = $conn->prepare($queryInsert);
 
-if ($stmtInsert->execute()) {
-    echo json_encode(['status' => 'success', 'message' => 'Stock added successfully']);
-} else {
-    echo json_encode(['status' => 'error', 'message' => 'Failed to add stock: ' . $stmtInsert->error]);
+    // Verifikasi keberhasilan persiapan query
+    if (!$stmtInsert) {
+        echo json_encode(['status' => 'error', 'message' => 'Query preparation failed: ' . $conn->error]);
+        exit;
+    }
+
+    // Bind parameter dan eksekusi query
+    $stmtInsert->bind_param('iisdiisi', $toko_id, $produk_id, $harga, $stok, $laku_nominal, $tanggal_masuk, $id_pengiriman_checker, $id_pengiriman);
+
+    if (!$stmtInsert->execute()) {
+        echo json_encode(['status' => 'error', 'message' => 'Failed to add stock: ' . $stmtInsert->error]);
+        exit;
+    }
 }
 
 // Menutup statement dan koneksi
 $stmt->close();
 $stmtInsert->close();
 $conn->close();
+
+echo json_encode(['status' => 'success', 'message' => 'Stock added successfully']);
 ?>

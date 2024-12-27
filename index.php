@@ -15,23 +15,27 @@ if (strpos($request, '/api') === 0) {
 
 // Routing ke halaman login atau dashboard
 if ($request == '' || $request == '/login') {
-    require_once 'views/login.php'; 
+    require_once 'views/login.php';
 } elseif ($request == '/dashboard') {
-    require_once 'views/dashboard.php'; 
+    require_once 'views/dashboard.php';
 } elseif ($request == '/pengiriman') {
-    require_once 'views/pengiriman.php'; 
+    require_once 'views/pengiriman.php';
 } elseif ($request == '/retur') {
     require_once 'views/retur.php';
 } elseif ($request == '/stock') {
     require_once 'views/stock.php';
 } elseif ($request == '/produk') {
-    require_once 'views/produk.php'; 
+    require_once 'views/produk.php';
 } elseif ($request == '/pabrik') {
     require_once 'views/pabrik.php';
 } elseif ($request == '/bahan-baku') {
     require_once 'views/bahanbaku.php';
 } elseif ($request == '/track-bahan') {
     require_once 'views/trackbahan.php';
+} elseif ($request == '/pembukuan') {
+    require_once 'views/pembukuan.php';
+} elseif ($request == '/catatan') {
+    require_once 'views/notes.php';
 } else {
     http_response_code(404);
     echo "404 - Page Not Found";
