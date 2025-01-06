@@ -25,14 +25,20 @@ $stmt = $conn->prepare("
         pengiriman.id AS id_pengiriman,
         pengiriman.tanggal AS tanggal_pengiriman,
         pengiriman.status AS status_pengiriman,
-        produk.nama_produk AS produk_pengiriman,
+        produk.id AS produk_id,
+        produk.nama_produk,
+        produk.kemasan,
+        produk.ukuran_stoples,
+        produk.ukuran_mika,
+        produk.ukuran_paket,
+        produk.harga,
+        pengiriman.jumlah AS jumlah_produk,
         toko.id AS toko_id,
         toko.nama_toko,
         kota.nama_kota,
         retur.id AS id_retur,
         retur.jumlah_retur,
-        retur.total_retur_nominal,
-        retur.tanggal_retur
+        retur.total_retur_nominal
     FROM pengiriman
     JOIN produk ON pengiriman.produk_id = produk.id
     JOIN toko ON pengiriman.toko_id = toko.id
@@ -66,6 +72,10 @@ $data_pengiriman = [];
 while ($row = $result->fetch_assoc()) {
     $group_key = $row['toko_id'] . '-' . $row['tanggal_pengiriman'];
 
+    // Tentukan display name produk
+    $packaging = $row['ukuran_stoples'] ?: ($row['ukuran_mika'] ?: $row['ukuran_paket']);
+    $display_name = trim("{$row['nama_produk']} {$row['kemasan']} {$packaging}");
+
     // Jika grup belum ada, buat grup baru
     if (!isset($data_pengiriman[$group_key])) {
         $data_pengiriman[$group_key] = [
@@ -80,15 +90,20 @@ while ($row = $result->fetch_assoc()) {
     }
 
     // Tambahkan produk pengiriman ke grup
-    $data_pengiriman[$group_key]['produk'][] = $row['produk_pengiriman'];
+    $data_pengiriman[$group_key]['produk'][] = [
+        'id_produk' => $row['produk_id'],
+        'display_name' => $display_name,
+        'harga' => $row['harga'],
+        'jumlah' => $row['jumlah_produk']
+    ];
 
     // Tambahkan data retur jika ada
     if ($row['id_retur']) {
         $data_pengiriman[$group_key]['retur'][] = [
             'id_retur' => $row['id_retur'],
+            'display_name' => $display_name,
             'jumlah_retur' => $row['jumlah_retur'],
-            'total_retur_nominal' => $row['total_retur_nominal'],
-            'tanggal_retur' => $row['tanggal_retur']
+            'total_retur_nominal' => $row['total_retur_nominal']
         ];
     }
 }

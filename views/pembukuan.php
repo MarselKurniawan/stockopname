@@ -3,125 +3,131 @@ session_start();
 $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 require_once __DIR__ . '/../core/v2/config.php';
 require_once __DIR__ . '/../core/v2/database.php';
-require_once __DIR__ . '/../core/func/csrf_protection.php';
-
-include_once 'interface/header.php';
 
 $mysqli = db_connect();
 
-// Handle form submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $transaction_date = $_POST['transaction_date'];
-    $description = $_POST['description'];
-    $type = $_POST['type'];
-    $amount = (float) $_POST['amount'];
-
-    // Calculate "masuk", "keluar", and update "total"
-    $masuk = $type === 'in' ? $amount : 0;
-    $keluar = $type === 'out' ? $amount : 0;
-
-    // Get the last total from the database
-    $last_total = 0;
-    $result = $mysqli->query("SELECT total FROM transactions ORDER BY id DESC LIMIT 1");
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        $last_total = (float) $row['total'];
-    }
-
-    $new_total = $last_total + $masuk - $keluar;
-
-    // Insert the transaction into the database
-    $stmt = $mysqli->prepare("INSERT INTO transactions (transaction_date, description, masuk, keluar, total) VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param("sssdd", $transaction_date, $description, $masuk, $keluar, $new_total);
-
-    if ($stmt->execute()) {
-        header("Location: /stockopname/pembukuan"); // Redirect to avoid form resubmission
-        exit;
-    } else {
-        echo "Error: " . $stmt->error;
-    }
-}
-
 // Fetch all transactions
-$result = $mysqli->query("SELECT * FROM transactions ORDER BY transaction_date DESC");
+$result = $mysqli->query("SELECT * FROM transactions ORDER BY transaction_date ASC");
+$transactions = [];
+while ($row = $result->fetch_assoc()) {
+    $transactions[] = $row;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <link rel="stylesheet" href="https://localhost/stockopname/assets/dist/output.css">
-
-    <!-- <meta charset="UTF-8"> -->
-    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <title>Pembukuan</title>
-    <!-- <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> -->
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"] {
+            width: 100%;
+            border: none;
+            background: transparent;
+            padding: 4px;
+            outline: none;
+        }
+    </style>
 </head>
 
 <body class="">
     <div class="max-w-7xl px-2 py-4 sm:px-6 lg:px-8 lg:py-14 mx-auto ">
-        <h1 class="text-2xl font-bold mb-4">Pembukuan</h1>
-
-        <!-- Form for adding transactions -->
-        <form method="POST" class="mb-6">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                    <label for="transaction_date" class="block font-medium text-gray-700">Date</label>
-                    <input type="date" id="transaction_date" name="transaction_date" required
-                        class="mt-1 p-2 border border-gray-300 rounded w-full">
-                </div>
-                <div>
-                    <label for="description" class="block font-medium text-gray-700">Description</label>
-                    <input type="text" id="description" name="description" required
-                        class="mt-1 p-2 border border-gray-300 rounded w-full">
-                </div>
-                <div>
-                    <label for="type" class="block font-medium text-gray-700">Type</label>
-                    <select id="type" name="type" required class="mt-1 p-2 border border-gray-300 rounded w-full">
-                        <option value="in">Masuk</option>
-                        <option value="out">Keluar</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="amount" class="block font-medium text-gray-700">Amount</label>
-                    <input type="number" id="amount" name="amount" step="0.01" required
-                        class="mt-1 p-2 border border-gray-300 rounded w-full">
-                </div>
-            </div>
-            <button type="submit" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Add
-                Transaction</button>
-        </form>
+        <h1 class="text-2xl font-bold mb-4">Pembukuan (Editable Tabel)</h1>
 
         <!-- Table of transactions -->
-        <h2 class="text-xl font-bold mb-4">Transaction History</h2>
-        <table class="w-full border-collapse border border-gray-200">
-            <thead>
-                <tr>
-                    <th class="border border-gray-200 px-4 py-2">Date</th>
-                    <th class="border border-gray-200 px-4 py-2">Description</th>
-                    <th class="border border-gray-200 px-4 py-2">Debit</th>
-                    <th class="border border-gray-200 px-4 py-2">Kredit</th>
-                    <th class="border border-gray-200 px-4 py-2">Saldo</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php while ($row = $result->fetch_assoc()): ?>
+        <form id="transactionForm">
+            <table id="transactionTable">
+                <thead>
                     <tr>
-                        <td class="border border-gray-200 px-4 py-2"><?= htmlspecialchars($row['transaction_date']) ?></td>
-                        <td class="border border-gray-200 px-4 py-2"><?= htmlspecialchars($row['description']) ?></td>
-                        <td class="border border-gray-200 px-4 py-2 text-green-500">
-                            <?= $row['masuk'] > 0 ? number_format($row['masuk'], 2) : '-' ?>
-                        </td>
-                        <td class="border border-gray-200 px-4 py-2 text-red-500">
-                            <?= $row['keluar'] > 0 ? number_format($row['keluar'], 2) : '-' ?>
-                        </td>
-                        <td class="border border-gray-200 px-4 py-2 font-bold"><?= number_format($row['total'], 2) ?></td>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Debit (Masuk)</th>
+                        <th>Credit (Keluar)</th>
+                        <th>Saldo</th>
                     </tr>
-                <?php endwhile; ?>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <?php
+                    $currentSaldo = 0;
+                    foreach ($transactions as $index => $transaction) {
+                        $currentSaldo += $transaction['masuk'] - $transaction['keluar'];
+                    ?>
+                        <tr>
+                            <td>
+                                <input type="date" name="transaction_date[]" value="<?= htmlspecialchars($transaction['transaction_date']) ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="description[]" value="<?= htmlspecialchars($transaction['description']) ?>">
+                            </td>
+                            <td>
+                                <input type="number" name="masuk[]" step="0.01" value="<?= htmlspecialchars($transaction['masuk']) ?>" class="debit">
+                            </td>
+                            <td>
+                                <input type="number" name="keluar[]" step="0.01" value="<?= htmlspecialchars($transaction['keluar']) ?>" class="credit">
+                            </td>
+                            <td>
+                                <span class="saldo"><?= number_format($currentSaldo, 2) ?></span>
+                            </td>
+                            <input type="hidden" name="id[]" value="<?= $transaction['id'] ?>">
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+            <button type="button" id="saveButton" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                Simpan
+            </button>
+        </form>
     </div>
 
-    
+    <script>
+        const table = document.getElementById('transactionTable');
+        const saveButton = document.getElementById('saveButton');
+
+        // Recalculate saldo on input change
+        table.addEventListener('input', () => {
+            const rows = table.querySelectorAll('tbody tr');
+            let saldo = 0;
+
+            rows.forEach(row => {
+                const debit = parseFloat(row.querySelector('.debit').value) || 0;
+                const credit = parseFloat(row.querySelector('.credit').value) || 0;
+
+                saldo += debit - credit;
+                row.querySelector('.saldo').textContent = saldo.toFixed(2);
+            });
+        });
+
+        // Save data to the database
+        saveButton.addEventListener('click', async () => {
+            const formData = new FormData(document.getElementById('transactionForm'));
+
+            try {
+                const response = await axios.post('/stockopname/save_transactions.php', formData);
+                alert('Data berhasil disimpan!');
+                location.reload();
+            } catch (error) {
+                console.error(error);
+                alert('Terjadi kesalahan saat menyimpan data.');
+            }
+        });
+    </script>
 </body>
 
 </html>

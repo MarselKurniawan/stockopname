@@ -315,20 +315,6 @@ include_once 'interface/header.php';
                                 <th scope="col" class="px-6 py-3 text-start">
                                     <div class="flex items-center gap-x-2">
                                         <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                                            Jumlah Retur
-                                        </span>
-                                    </div>
-                                </th>
-                                <th scope="col" class="px-6 py-3 text-start">
-                                    <div class="flex items-center gap-x-2">
-                                        <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                                            Tagihan Retur
-                                        </span>
-                                    </div>
-                                </th>
-                                <th scope="col" class="px-6 py-3 text-start">
-                                    <div class="flex items-center gap-x-2">
-                                        <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
                                             Status Pengiriman
                                         </span>
                                     </div>
@@ -415,25 +401,56 @@ include_once 'interface/header.php';
 <!-- End Table Section -->
 
 <!-- Modal Produk -->
-<div id="modalProduk" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
-    <div class="bg-white rounded-lg p-6">
-        <h2 class="text-lg font-bold mb-4">Detail Produk</h2>
-        <div id="modalProdukContent"></div>
-        <button onclick="document.getElementById('modalProduk').classList.add('hidden');"
-            class="mt-4 bg-red-500 text-white px-4 py-2 rounded">Tutup</button>
+<div id="modalProduk" class="fixed inset-0 hidden z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
+    <div class="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
+        <div class="flex items-center justify-between pb-4 border-b">
+            <h2 class="text-lg font-bold">Detail Produk</h2>
+            <button onclick="document.getElementById('modalProduk').classList.add('hidden')"
+                class="text-gray-500 hover:text-gray-800">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 6 6 18"></path>
+                    <path d="m6 6 12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <div id="modalProdukContent" class="mt-4 space-y-2">
+            <!-- Produk list akan diisi dinamis -->
+        </div>
+        <div class="mt-6 text-right">
+            <button onclick="document.getElementById('modalProduk').classList.add('hidden')"
+                class="px-4 py-2 text-sm font-medium text-white bg-red-500 rounded hover:bg-red-600">
+                Tutup
+            </button>
+        </div>
     </div>
 </div>
 
 <!-- Modal Retur -->
-<div id="modalRetur" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
-    <div class="bg-white rounded-lg p-6">
-        <h2 class="text-lg font-bold mb-4">Detail Retur</h2>
-        <div id="modalReturContent"></div>
-        <button onclick="document.getElementById('modalRetur').classList.add('hidden');"
-            class="mt-4 bg-red-500 text-white px-4 py-2 rounded">Tutup</button>
+<div id="modalRetur" class="fixed inset-0 hidden z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
+    <div class="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
+        <div class="flex items-center justify-between pb-4 border-b">
+            <h2 class="text-lg font-bold">Detail Retur</h2>
+            <button onclick="document.getElementById('modalRetur').classList.add('hidden')"
+                class="text-gray-500 hover:text-gray-800">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 6 6 18"></path>
+                    <path d="m6 6 12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <div id="modalReturContent" class="mt-4 space-y-2">
+            <!-- Retur list akan diisi dinamis -->
+        </div>
+        <div class="mt-6 text-right">
+            <button onclick="document.getElementById('modalRetur').classList.add('hidden')"
+                class="px-4 py-2 text-sm font-medium text-white bg-red-500 rounded hover:bg-red-600">
+                Tutup
+            </button>
+        </div>
     </div>
 </div>
-
 
 
 
@@ -901,88 +918,7 @@ include_once 'interface/header.php';
         }, 3000);
     });
 
-    document.addEventListener('DOMContentLoaded', function () {
-        const csrfToken = document.getElementById('csrf_token').value;
 
-        if (!csrfToken) {
-            console.error('CSRF token not found');
-            return;
-        }
-
-        fetch(`/stockopname/api/getPembayaran.php?csrf_token=${csrfToken}`, {
-            method: 'GET'
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                const tableBody = document.getElementById('pembayaranTable');
-                data.data.forEach(item => {
-                    // Format tanggal
-                    let tanggalFormatted = new Date(item.tanggal_pengiriman).toLocaleDateString('id-ID', {
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric'
-                    });
-
-                    // Format nama produk sebagai list
-                    let produkList = item.produk.map(prod => `<li>${prod}</li>`).join('');
-
-                    // Format data retur sebagai list
-                    let returList = item.retur.length > 0 ? item.retur.map(retur => `
-                    <li>
-                        Jumlah: ${retur.jumlah_retur}, 
-                        Nominal: ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(retur.total_retur_nominal)}, 
-                        Tanggal: ${new Date(retur.tanggal_retur).toLocaleDateString('id-ID')}
-                    </li>
-                `).join('') : '-';
-
-                    // Membuat baris tabel
-                    let row = `
-                <tr>
-                    <td class="p-6 text-sm">${item.nama_kota}</td>
-                    <td class="p-6 text-sm">${item.nama_toko}</td>
-                    <td class="p-6 text-sm">${tanggalFormatted}</td>
-                    <td class="p-6 text-sm">${item.produk.length}</td>
-                    <td class="p-6 text-sm">${item.retur.length}</td>
-                    <td class="p-6 text-sm">${item.status_pengiriman || '-'}</td>
-                    <td class="p-6 text-end">
-                        <button class="btn-detail-produk bg-blue-500 text-white rounded px-3 py-1" data-produk="${encodeURIComponent(produkList)}">
-                            Lihat Produk
-                        </button>
-                        <button class="btn-detail-retur bg-red-500 text-white rounded px-3 py-1" data-retur="${encodeURIComponent(returList)}">
-                            Lihat Retur
-                        </button>
-                    </td>
-                </tr>`;
-                    tableBody.insertAdjacentHTML('beforeend', row);
-                });
-
-                // Event listener untuk tombol detail produk
-                document.querySelectorAll('.btn-detail-produk').forEach(btn => {
-                    btn.addEventListener('click', function () {
-                        const produk = decodeURIComponent(this.getAttribute('data-produk'));
-                        document.getElementById('modalProdukContent').innerHTML = `<ul>${produk}</ul>`;
-                        document.getElementById('modalProduk').classList.remove('hidden');
-                    });
-                });
-
-                // Event listener untuk tombol detail retur
-                document.querySelectorAll('.btn-detail-retur').forEach(btn => {
-                    btn.addEventListener('click', function () {
-                        const retur = decodeURIComponent(this.getAttribute('data-retur'));
-                        document.getElementById('modalReturContent').innerHTML = `<ul>${retur}</ul>`;
-                        document.getElementById('modalRetur').classList.remove('hidden');
-                    });
-                });
-            })
-            .catch(error => {
-                console.error('Error fetching stock data:', error);
-            });
-    });
 
 
 
@@ -1023,15 +959,15 @@ include_once 'interface/header.php';
         newRow.className = 'so-detail-row flex flex-col sm:flex-row gap-3';
 
         newRow.innerHTML = `
-        <select name="product_id[]"
-            class="productSelect py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500">
-            <option selected>Select Produk</option>
+                <select name="product_id[]"
+            class= "productSelect py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500" >
+                    <option selected>Select Produk</option>
         </select>
-        <input type="text" name="jumlah[]"
-            class="jumlahInput py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500"
-            placeholder="Jumlah">
-        <button type="button" class="removeRow text-red-500 text-sm">Hapus</button>
-    `;
+                    <input type="text" name="jumlah[]"
+                        class="jumlahInput py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500"
+                        placeholder="Jumlah">
+                        <button type="button" class="removeRow text-red-500 text-sm">Hapus</button>
+                        `;
 
         container.appendChild(newRow);
 
@@ -1172,5 +1108,90 @@ include_once 'interface/header.php';
     openModalBtn.addEventListener("click", openModal);
     closeModalBtn.addEventListener("click", closeModal);
     closeModalFooterBtn.addEventListener("click", closeModal);
+
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const csrfToken = document.getElementById('csrf_token').value;
+
+        if (!csrfToken) {
+            console.error('CSRF token not found');
+            return;
+        }
+
+        fetch(`/stockopname/api/getPembayaran.php?csrf_token=${csrfToken}`, {
+            method: 'GET'
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                const tableBody = document.getElementById('pembayaranTable');
+                data.data.forEach(item => {
+                    // Format tanggal
+                    let tanggalFormatted = new Date(item.tanggal_pengiriman).toLocaleDateString('id-ID', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    });
+
+                    // Format nama produk sebagai list
+                    let produkList = item.produk.map(prod => `
+                    <li>${prod.display_name} - ${prod.jumlah} pcs @ ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(prod.harga)}</li>
+                `).join('');
+
+                    // Format data retur sebagai list
+                    let returList = item.retur.length > 0 ? item.retur.map(retur => `
+                    <li>${retur.display_name} - ${retur.jumlah_retur} pcs, Total: ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(retur.total_retur_nominal)}</li>
+                `).join('') : '-';
+
+                    // Membuat baris tabel
+                    let row = `
+                    <tr>
+                        <td class="p-4 text-sm">${item.nama_kota}</td>
+                        <td class="p-4 text-sm">${item.nama_toko}</td>
+                        <td class="p-4 text-sm">${tanggalFormatted}</td>
+                        <td class="p-4 text-sm">
+                            ${item.status_pengiriman === 'done'
+                            ? '<span class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium border border-teal-500 text-teal-500">Sudah Terbayar</span>'
+                            : '<span class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium border border-red-500 text-red-500">Belum Terbayar</span>'}
+                        </td>
+                        <td class="p-4 text-end">
+                            <button class="btn-detail-produk py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border text-blue-600 hover:bg-blue-100" data-produk="${encodeURIComponent(produkList)}">
+                                Detail Produk
+                            </button>
+                            <button class="btn-detail-retur py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border text-red-600 hover:bg-red-100" data-retur="${encodeURIComponent(returList)}">
+                                Detail Retur
+                            </button>
+                        </td>
+                    </tr>`;
+                    tableBody.insertAdjacentHTML('beforeend', row);
+                });
+
+                // Event listener untuk tombol detail produk
+                document.querySelectorAll('.btn-detail-produk').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        const produk = decodeURIComponent(this.getAttribute('data-produk'));
+                        document.getElementById('modalProdukContent').innerHTML = `<ul>${produk}</ul>`;
+                        document.getElementById('modalProduk').classList.remove('hidden');
+                    });
+                });
+
+                // Event listener untuk tombol detail retur
+                document.querySelectorAll('.btn-detail-retur').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        const retur = decodeURIComponent(this.getAttribute('data-retur'));
+                        document.getElementById('modalReturContent').innerHTML = `<ul>${retur}</ul>`;
+                        document.getElementById('modalRetur').classList.remove('hidden');
+                    });
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching stock data:', error);
+            });
+    });
 
 </script>
