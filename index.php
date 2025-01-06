@@ -18,12 +18,12 @@ if ($request == '' || $request == '/login') {
     require_once 'views/login.php';
 } elseif ($request == '/dashboard') {
     require_once 'views/dashboard.php';
-} elseif ($request == '/pengiriman') {
-    require_once 'views/pengiriman.php';
+} elseif ($request == '/penjualan') {
+    require_once 'views/penjualan.php';
 } elseif ($request == '/retur') {
     require_once 'views/retur.php';
-} elseif ($request == '/stock') {
-    require_once 'views/stock.php';
+} elseif ($request == '/pembayaran') {
+    require_once 'views/pembayaran.php';
 } elseif ($request == '/produk') {
     require_once 'views/produk.php';
 } elseif ($request == '/pabrik') {
@@ -34,6 +34,8 @@ if ($request == '' || $request == '/login') {
     require_once 'views/trackbahan.php';
 } elseif ($request == '/pembukuan') {
     require_once 'views/pembukuan.php';
+} elseif ($request == '/toko') {
+    require_once 'views/toko.php';
 } elseif ($request == '/catatan') {
     require_once 'views/notes.php';
 } else {

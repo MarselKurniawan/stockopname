@@ -22,7 +22,8 @@ try {
             produk.ukuran_mika,
             produk.ukuran_paket,
             pengiriman.tanggal,
-            pengiriman.jumlah
+            pengiriman.jumlah,
+            pengiriman.discount
         FROM 
             pengiriman 
         JOIN 
@@ -50,12 +51,13 @@ try {
 
                 'id_pengiriman' => $row['id_pengiriman'],
                 'nama_toko' => $row['nama_toko'],
-                'nama_produk' => "{$row['nama_produk']} ({$row['kemasan']} - {$packaging})",
+                'nama_produk' => "{$row['nama_produk']} {$row['kemasan']} {$packaging}",
                 'harga' => $row['harga'],
                 'jumlah' => $row['jumlah'],
                 'tanggal' => $row['tanggal'],
                 'produk_id' => $row['produk_id'],
                 'toko_id' => $row['toko_id'],
+                'discount' => $row['discount']
             ];
         }
     }

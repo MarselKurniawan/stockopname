@@ -49,13 +49,15 @@ $result = $mysqli->query("SELECT * FROM transactions ORDER BY transaction_date D
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://localhost/stockopname/assets/dist/output.css">
+
+    <!-- <meta charset="UTF-8"> -->
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
     <title>Pembukuan</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> -->
 </head>
 
-<body class="bg-gray-100 p-6">
+<body class="">
     <div class="max-w-7xl px-2 py-4 sm:px-6 lg:px-8 lg:py-14 mx-auto ">
         <h1 class="text-2xl font-bold mb-4">Pembukuan</h1>
 
@@ -107,15 +109,19 @@ $result = $mysqli->query("SELECT * FROM transactions ORDER BY transaction_date D
                         <td class="border border-gray-200 px-4 py-2"><?= htmlspecialchars($row['transaction_date']) ?></td>
                         <td class="border border-gray-200 px-4 py-2"><?= htmlspecialchars($row['description']) ?></td>
                         <td class="border border-gray-200 px-4 py-2 text-green-500">
-                            <?= $row['masuk'] > 0 ? number_format($row['masuk'], 2) : '-' ?></td>
+                            <?= $row['masuk'] > 0 ? number_format($row['masuk'], 2) : '-' ?>
+                        </td>
                         <td class="border border-gray-200 px-4 py-2 text-red-500">
-                            <?= $row['keluar'] > 0 ? number_format($row['keluar'], 2) : '-' ?></td>
+                            <?= $row['keluar'] > 0 ? number_format($row['keluar'], 2) : '-' ?>
+                        </td>
                         <td class="border border-gray-200 px-4 py-2 font-bold"><?= number_format($row['total'], 2) ?></td>
                     </tr>
                 <?php endwhile; ?>
             </tbody>
         </table>
     </div>
+
+    
 </body>
 
 </html>

@@ -34,11 +34,11 @@ if ($input === null) {
     echo json_encode(['status' => 'error', 'message' => 'Invalid JSON']);
     exit;
 }
-
 // Retrieve data from JSON
 $city_id = $input['city_id'] ?? null;
 $store_id = $input['store_id'] ?? null;
 $tanggal = $input['tanggal'] ?? null;
+$discount = $input['discount'] ?? null;
 $products = $input['products'] ?? [];
 
 // Validate data
@@ -47,6 +47,10 @@ if (empty($city_id) || empty($store_id) || empty($tanggal) || empty($products)) 
     exit;
 }
 
+// Calculate $tgl_tagihan as 2 weeks from $tanggal
+$tgl_tagihan = date('Y-m-d', strtotime($tanggal . ' +14 days'));
+
+// Function to generate unique pengiriman ID
 function generateUniquePengirimanId($conn)
 {
     do {
@@ -87,15 +91,15 @@ try {
         }
 
         // Insert each product into the pengiriman table
-        $query = "INSERT INTO pengiriman (id_pengiriman, toko_id, produk_id, harga, tanggal, jumlah) 
-                  VALUES (?, ?, ?, ?, ?, ?)";
+        $query = "INSERT INTO pengiriman (id_pengiriman, toko_id, produk_id, harga, tanggal, jumlah, discount, tgl_tagihan) 
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($query);
 
         if (!$stmt) {
             throw new Exception('Query preparation failed: ' . $conn->error);
         }
 
-        $stmt->bind_param('iiidsi', $id_pengiriman, $store_id, $product_id, $harga, $tanggal, $jumlah);
+        $stmt->bind_param('iiidsiss', $id_pengiriman, $store_id, $product_id, $harga, $tanggal, $jumlah, $discount, $tgl_tagihan);
 
         if (!$stmt->execute()) {
             throw new Exception('Failed to execute query: ' . $stmt->error);
@@ -116,4 +120,5 @@ try {
 
 // Close database connection
 $conn->close();
+
 ?>
