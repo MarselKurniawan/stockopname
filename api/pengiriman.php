@@ -20,11 +20,11 @@ if ($conn->connect_error) {
 }
 
 // Query untuk mengambil data pengiriman
-$stmt = $conn->prepare("SELECT pengiriman.*, produk.nama_produk, toko.nama_toko, kota.nama_kota 
+$stmt = $conn->prepare("SELECT pengiriman.*, produk.nama_produk, produk.ukuran_stoples, produk.ukuran_mika, produk.ukuran_paket, produk.kemasan, toko.nama_toko, kota.nama_kota 
     FROM pengiriman 
     JOIN produk ON pengiriman.produk_id = produk.id 
     JOIN toko ON pengiriman.toko_id = toko.id 
-    JOIN kota ON toko.kota_id = kota.id;");
+    JOIN kota ON toko.kota_id = kota.id  ORDER BY status != 'done' DESC;");
 if (!$stmt) {
     echo json_encode(['status' => 'error', 'message' => 'Query preparation failed: ' . $conn->error]);
     exit;
@@ -46,7 +46,12 @@ if (!$result) {
 // Memproses hasil
 $pengiriman = [];
 while ($row = $result->fetch_assoc()) {
-    $pengiriman[] = $row;
+    // Tentukan display_produk
+    $packaging = $row['ukuran_stoples'] ?: ($row['ukuran_mika'] ?: $row['ukuran_paket']);
+    $display_produk = trim("{$row['nama_produk']} {$row['kemasan']} {$packaging}");
+
+    // Tambahkan ke data pengiriman
+    $pengiriman[] = array_merge($row, ['display_produk' => $display_produk]);
 }
 
 // Mengembalikan hasil dalam format JSON
@@ -59,4 +64,3 @@ if (!empty($pengiriman)) {
 // Menutup statement dan koneksi
 $stmt->close();
 $conn->close();
-    

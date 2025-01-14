@@ -11,10 +11,13 @@ try {
     $stmt = $conn->prepare("
         SELECT 
             pengiriman.id, 
+            pengiriman.status, 
             pengiriman.id_pengiriman, 
             pengiriman.toko_id,
             pengiriman.produk_id,
             toko.nama_toko,
+            kota.nama_kota,
+            kota.id,
             produk.nama_produk,
             pengiriman.harga,
             produk.kemasan,
@@ -23,11 +26,15 @@ try {
             produk.ukuran_paket,
             pengiriman.tanggal,
             pengiriman.jumlah,
-            pengiriman.discount
+            pengiriman.discount,
+            pengiriman.tgl_tagihan,
+            toko.kota_id
         FROM 
             pengiriman 
         JOIN 
             toko ON pengiriman.toko_id = toko.id 
+        JOIN
+            kota ON toko.kota_id = kota.id 
         JOIN 
             produk ON pengiriman.produk_id = produk.id
         LEFT JOIN 
@@ -55,9 +62,12 @@ try {
                 'harga' => $row['harga'],
                 'jumlah' => $row['jumlah'],
                 'tanggal' => $row['tanggal'],
+                'tgl_tagihan' => $row['tgl_tagihan'],
                 'produk_id' => $row['produk_id'],
                 'toko_id' => $row['toko_id'],
-                'discount' => $row['discount']
+                'discount' => $row['discount'],
+                'nama_kota' => $row['nama_kota'],
+                'status' => $row['status']
             ];
         }
     }

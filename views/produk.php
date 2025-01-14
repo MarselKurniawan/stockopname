@@ -1,191 +1,193 @@
 <?php
 session_start();
-$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 require_once __DIR__ . '/../core/v2/config.php';
 require_once __DIR__ . '/../core/v2/database.php';
 require_once __DIR__ . '/../core/func/csrf_protection.php';
 
+// Handle form submission for adding or editing products
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  $conn = db_connect();
+  $nama_produk = mysqli_real_escape_string($conn, $_POST['nama_produk']);
+  $kemasan = mysqli_real_escape_string($conn, $_POST['kemasan']);
+  $ukuran = '';
 
-error_log('Token di sesi: ' . $_SESSION['csrf_token']);
-error_log('Token yang dikirim: ' . $_SESSION['csrf_token']);
+  if ($kemasan === 'stoples') {
+    $ukuran = mysqli_real_escape_string($conn, $_POST['ukuran_stoples']);
+  } elseif ($kemasan === 'mika') {
+    $ukuran = mysqli_real_escape_string($conn, $_POST['ukuran_mika']);
+  } elseif ($kemasan === 'paketan') {
+    $ukuran = mysqli_real_escape_string($conn, $_POST['ukuran_paket']);
+  }
 
+  $harga = mysqli_real_escape_string($conn, $_POST['harga']);
+  $id = isset($_POST['id']) ? $_POST['id'] : null;
 
-include_once 'interface/header.php';
+  if ($id) {
+    // Update Product
+    $query = "UPDATE produk SET nama_produk = ?, kemasan = ?, ukuran_stoples = ?, ukuran_mika = ?, ukuran_paket = ?, harga = ? WHERE id = ?";
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param(
+      $stmt,
+      'ssssssd',
+      $nama_produk,
+      $kemasan,
+      ($kemasan === 'stoples' ? $ukuran : ""),
+      ($kemasan === 'mika' ? $ukuran : ""),
+      ($kemasan === 'paketan' ? $ukuran : ""),
+      $harga,
+      $id
+    );
+    mysqli_stmt_execute($stmt);
+  } else {
+    // Add Product
+    $query = "INSERT INTO produk (nama_produk, kemasan, ukuran_stoples, ukuran_mika, ukuran_paket, harga) 
+                VALUES (?, ?, ?, ?, ?, ?)";
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param(
+      $stmt,
+      'sssssd',
+      $nama_produk,
+      $kemasan,
+      ($kemasan === 'stoples' ? $ukuran : ""),
+      ($kemasan === 'mika' ? $ukuran : ""),
+      ($kemasan === 'paketan' ? $ukuran : ""),
+      $harga
+    );
+    mysqli_stmt_execute($stmt);
+  }
+
+  header("Location: produk.php"); // Redirect to refresh the page after form submission
+  exit;
+}
+
+// Handle delete product
+if (isset($_GET['delete'])) {
+  $conn = db_connect();
+  $id = $_GET['delete'];
+  $query = "DELETE FROM produk WHERE id = ?";
+  $stmt = mysqli_prepare($conn, $query);
+  mysqli_stmt_bind_param($stmt, 'd', $id);
+  mysqli_stmt_execute($stmt);
+
+  header("Location: produk.php"); // Redirect after deleting product
+  exit;
+}
+
+// Fetch Products from Database
+$conn = db_connect();
+$query = "SELECT * FROM produk";
+$products_result = mysqli_query($conn, $query);
 ?>
-<!-- Pastikan ada tempat untuk menyimpan token CSRF -->
 
-<!-- Table Section -->
-<div class="max-w-[85rem] px py-4 sm:px-6 lg:px-8 lg:py-4 mx-auto">
-  <!-- Card -->
-  <div class="flex flex-col">
-    <div class="-m-1.5 overflow-x-auto">
-      <div class="p-1.5 min-w-full inline-block align-middle">
-        <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-          <!-- Header -->
-          <div class="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-b border-gray-200">
-            <div>
-              <h2 class="text-xl font-semibold text-gray-800">
-                Produk
-              </h2>
-              <p class="text-sm text-gray-600">
-                Add, edit and more.
-              </p>
-            </div>
+<!DOCTYPE html>
+<html lang="id">
 
-            <div>
-              <div class="inline-flex gap-x-2">
-                <a class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none" href="#">
-                  <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M5 12h14" />
-                    <path d="M12 5v14" />
-                  </svg>
-                  Add Data
-                </a>
-              </div>
-            </div>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Produk Management</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.0.23/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100">
+  <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-3xl font-semibold text-gray-800">Produk Management</h1>
+      <button class="bg-green-600 text-white py-2 px-4 rounded-lg" onclick="openAddProductModal()">Tambah
+        Produk</button>
+    </div>
+
+    <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+      <thead>
+        <tr>
+          <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Nama</th>
+          <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Kemasan</th>
+          <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Ukuran</th>
+          <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Harga</th>
+          <th class="px-6 py-3 text-right text-sm font-medium text-gray-700">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php while ($row = mysqli_fetch_assoc($products_result)): ?>
+          <tr>
+            <td class="px-6 py-3"><?= htmlspecialchars($row['nama_produk']) ?></td>
+            <td class="px-6 py-3"><?= htmlspecialchars($row['kemasan']) ?></td>
+            <td class="px-6 py-3">
+              <?= htmlspecialchars($row['kemasan'] === 'stoples' ? $row['ukuran_stoples'] :
+                ($row['kemasan'] === 'mika' ? $row['ukuran_mika'] : $row['ukuran_paket'])) ?>
+            </td>
+            <td class="px-6 py-3"><?= number_format($row['harga'], 2) ?></td>
+            <td class="px-6 py-3 text-right">
+              <a href="produk.php?edit=<?= $row['id'] ?>" class="text-blue-600">Edit</a>
+              <a href="produk.php?delete=<?= $row['id'] ?>" class="text-red-600">Delete</a>
+            </td>
+          </tr>
+        <?php endwhile; ?>
+      </tbody>
+    </table>
+
+    <!-- Modal for Add/Edit Product -->
+    <div id="addModal" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+      <div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">
+          <?= isset($_GET['edit']) ? 'Edit Produk' : 'Tambah Produk' ?></h2>
+        <form method="POST">
+          <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
+          <input type="hidden" name="id" value="<?= isset($_GET['edit']) ? $_GET['edit'] : ''; ?>">
+
+          <div class="mb-4">
+            <label for="nama_produk" class="block text-sm font-medium text-gray-600">Nama Produk</label>
+            <input type="text" id="nama_produk" name="nama_produk"
+              class="block w-full mt-1 p-2 border border-gray-300 rounded-md"
+              value="<?= isset($_GET['edit']) ? htmlspecialchars($row['nama_produk']) : ''; ?>" required>
           </div>
-          <!-- End Header -->
 
-          <!-- Table -->
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-              <tr>
-
-                <th scope="col" class="ps-6 lg:ps-3 xl:ps-6 px-6 py-3 text-start">
-                  <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      Nama
-                    </span>
-                  </div>
-                </th>
-
-                <th scope="col" class="px-6 py-3 text-start">
-                  <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      Jenis 
-                    </span>
-                  </div>
-                </th>
-
-                <th scope="col" class="px-6 py-3 text-start">
-                  <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      Stok Barang
-                    </span>
-                  </div>
-                </th>
-
-                <th scope="col" class="px-6 py-3 text-start">
-                  <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      Harga
-                    </span>
-                  </div>
-                </th>
-
-                <th scope="col" class="px-6 py-3 text-start">
-                  <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      
-                    </span>
-                  </div>
-                </th>
-
-                <th scope="col" class="px-6 py-3 text-end"></th>
-              </tr>
-            </thead>
-            <input type="hidden" id="csrf_token" value="<?php echo generate_csrf_token(); ?>">
-
-            <tbody class="divide-y p-6 divide-gray-200" id="stokTable">
-
-            </tbody>
-          </table>
-          <!-- End Table -->
-
-          <!-- Footer -->
-          <div class="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-t border-gray-200">
-            <div>
-              <p class="text-sm text-gray-600">
-                <span class="font-semibold text-gray-800">12</span> results
-              </p>
-            </div>
-
-            <div>
-              <div class="inline-flex gap-x-2">
-                <button type="button" class="py-1.5 px-2 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-gray-50">
-                  <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="m15 18-6-6 6-6" />
-                  </svg>
-                  Prev
-                </button>
-
-                <button type="button" class="py-1.5 px-2 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-gray-50">
-                  Next
-                  <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="m9 18 6-6-6-6" />
-                  </svg>
-                </button>
-              </div>
-            </div>
+          <div class="mb-4">
+            <label for="kemasan" class="block text-sm font-medium text-gray-600">Kemasan</label>
+            <select id="kemasan" name="kemasan" class="block w-full mt-1 p-2 border border-gray-300 rounded-md"
+              required>
+              <option value="stoples" <?= isset($_GET['edit']) && $row['kemasan'] === 'stoples' ? 'selected' : ''; ?>>
+                Stoples</option>
+              <option value="mika" <?= isset($_GET['edit']) && $row['kemasan'] === 'mika' ? 'selected' : ''; ?>>Mika
+              </option>
+              <option value="paketan" <?= isset($_GET['edit']) && $row['kemasan'] === 'paketan' ? 'selected' : ''; ?>>
+                Paketan</option>
+            </select>
           </div>
-          <!-- End Footer -->
-        </div>
+
+          <div class="mb-4" id="ukuranFields">
+            <!-- Dynamic size fields based on kemasan -->
+            <?php if (isset($_GET['edit'])): ?>
+              <!-- Add pre-filled data for edit if necessary -->
+            <?php endif; ?>
+          </div>
+
+          <div class="mb-4">
+            <label for="harga" class="block text-sm font-medium text-gray-600">Harga</label>
+            <input type="number" id="harga" name="harga" class="block w-full mt-1 p-2 border border-gray-300 rounded-md"
+              value="<?= isset($_GET['edit']) ? htmlspecialchars($row['harga']) : ''; ?>" required>
+          </div>
+
+          <div class="text-right">
+            <button type="submit"
+              class="bg-blue-600 text-white py-2 px-4 rounded-lg"><?= isset($_GET['edit']) ? 'Update Produk' : 'Tambah Produk' ?></button>
+            <button type="button" onclick="closeAddProductModal()"
+              class="bg-gray-300 text-gray-800 py-2 px-4 rounded-lg">Batal</button>
+          </div>
+        </form>
       </div>
     </div>
+
+    <script>
+      function openAddProductModal() {
+        document.getElementById('addModal').classList.remove('hidden');
+      }
+
+      function closeAddProductModal() {
+        document.getElementById('addModal').classList.add('hidden');
+      }
+    </script>
   </div>
-  <!-- End Card -->
-</div>
-<!-- End Table Section -->
+</body>
 
-
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const csrfToken = document.getElementById('csrf_token').value;
-
-    if (!csrfToken) {
-      console.error('CSRF token not found');
-      return;
-    }
-
-    fetch(`/stockopname/api/get_produk.php?csrf_token=${csrfToken}`, {
-        method: 'GET'
-      })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then(data => {
-        const tableBody = document.getElementById('stokTable');
-        data.data.forEach(item => {
-          // Memformat harga menjadi ribuan
-          let hargaFormatted = new Intl.NumberFormat('id-ID', {
-            style: 'currency',
-            currency: 'IDR'
-          }).format(item.harga);
-
-          // Memformat tanggal ke format tanggal bulan tahun
-          let tanggalKeluarFormatted = new Date(item.tanggal_keluar).toLocaleDateString('id-ID', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric'
-          });
-
-          // Membuat baris tabel dengan data yang diformat
-          let row = `
-                <tr>
-                    <td class="p-6 text-sm">${item.nama_produk}</td>
-                    <td class="p-6 text-sm">${item.kemasan}</td>
-                    <td class="p-6 text-sm">${item.ukuran_stoples}</td>
-                    <td class="p-6 text-sm">${hargaFormatted}</td>
-                </tr>`;
-          tableBody.insertAdjacentHTML('beforeend', row); // Menambahkan baris baru ke tabel
-        });
-      })
-      .catch(error => {
-        console.error('Error fetching stock data:', error);
-      });
-  });
-</script>
+</html>

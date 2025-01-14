@@ -1,131 +1,215 @@
 <?php
 session_start();
-$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 require_once __DIR__ . '/../core/v2/config.php';
 require_once __DIR__ . '/../core/v2/database.php';
+require_once __DIR__ . '/../core/func/csrf_protection.php';
 
-$mysqli = db_connect();
+$conn = db_connect();
 
-// Fetch all transactions
-$result = $mysqli->query("SELECT * FROM transactions ORDER BY transaction_date ASC");
+include_once 'interface/header.php';
+
+// Handle AJAX Requests
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $action = $_POST['action'];
+
+    if ($action === 'add') {
+        $transaction_date = $_POST['transaction_date'];
+        $description = $_POST['description'];
+        $masuk = $_POST['masuk'] ?? 0;
+        $keluar = $_POST['keluar'] ?? 0;
+
+        $query = "INSERT INTO transactions (transaction_date, description, masuk, keluar) VALUES (?, ?, ?, ?)";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param('ssdd', $transaction_date, $description, $masuk, $keluar);
+
+        if ($stmt->execute()) {
+            echo json_encode(['status' => 'success']);
+        } else {
+            echo json_encode(['status' => 'error']);
+        }
+        exit;
+    }
+
+    if ($action === 'edit') {
+        $id = $_POST['id'];
+        $transaction_date = $_POST['transaction_date'];
+        $description = $_POST['description'];
+        $masuk = $_POST['masuk'] ?? 0;
+        $keluar = $_POST['keluar'] ?? 0;
+
+        $query = "UPDATE transactions SET transaction_date = ?, description = ?, masuk = ?, keluar = ? WHERE id = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param('ssddi', $transaction_date, $description, $masuk, $keluar, $id);
+
+        if ($stmt->execute()) {
+            echo json_encode(['status' => 'success']);
+        } else {
+            echo json_encode(['status' => 'error']);
+        }
+        exit;
+    }
+
+    if ($action === 'delete') {
+        $id = $_POST['id'];
+
+        $query = "DELETE FROM transactions WHERE id = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param('i', $id);
+
+        if ($stmt->execute()) {
+            echo json_encode(['status' => 'success']);
+        } else {
+            echo json_encode(['status' => 'error']);
+        }
+        exit;
+    }
+}
+
+// Fetch transactions
+$query = "SELECT * FROM transactions ORDER BY transaction_date DESC";
+$result = $conn->query($query);
 $transactions = [];
 while ($row = $result->fetch_assoc()) {
     $transactions[] = $row;
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <link rel="stylesheet" href="https://localhost/stockopname/assets/dist/output.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookkeeping</title>
+    <link href="https://cdn.jsdelivr.net/npm/@preline/plugin/dist/preline.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <title>Pembukuan</title>
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-
-        input[type="text"],
-        input[type="number"],
-        input[type="date"] {
-            width: 100%;
-            border: none;
-            background: transparent;
-            padding: 4px;
-            outline: none;
-        }
-    </style>
 </head>
 
-<body class="">
-    <div class="max-w-7xl px-2 py-4 sm:px-6 lg:px-8 lg:py-14 mx-auto ">
-        <h1 class="text-2xl font-bold mb-4">Pembukuan (Editable Tabel)</h1>
+<body>
+    <div class="max-w-4xl mx-auto bg-white rounded-lg shadow p-6">
+        <h1 class="text-2xl font-bold mb-4">Bookkeeping</h1>
 
-        <!-- Table of transactions -->
-        <form id="transactionForm">
-            <table id="transactionTable">
-                <thead>
+        <!-- Add/Edit Transaction Form -->
+        <form id="transactionForm" class="mb-6">
+            <input type="hidden" id="transaction_id" name="id">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="transaction_date" class="block text-sm font-medium text-gray-700">Tanggal</label>
+                    <input type="date" id="transaction_date" name="transaction_date" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label for="description" class="block text-sm font-medium text-gray-700">Deskripsi</label>
+                    <input type="text" id="description" name="description" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label for="masuk" class="block text-sm font-medium text-gray-700">Debit (Masuk)</label>
+                    <input type="number" id="masuk" name="masuk" step="0.01" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500">
+                </div>
+                <div>
+                    <label for="keluar" class="block text-sm font-medium text-gray-700">Kredit (Keluar)</label>
+                    <input type="number" id="keluar" name="keluar" step="0.01" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500">
+                </div>
+            </div>
+            <button type="submit" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600">
+                Simpan Transaksi
+            </button>
+        </form>
+
+        <!-- Transactions Table -->
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
                     <tr>
-                        <th>Date</th>
-                        <th>Description</th>
-                        <th>Debit (Masuk)</th>
-                        <th>Credit (Keluar)</th>
-                        <th>Saldo</th>
+                        <th class="px-4 py-2 text-left text-sm font-medium text-gray-500 uppercase">Tanggal</th>
+                        <th class="px-4 py-2 text-left text-sm font-medium text-gray-500 uppercase">Deskripsi</th>
+                        <th class="px-4 py-2 text-right text-sm font-medium text-gray-500 uppercase">Debit</th>
+                        <th class="px-4 py-2 text-right text-sm font-medium text-gray-500 uppercase">Kredit</th>
+                        <th class="px-4 py-2 text-right text-sm font-medium text-gray-500 uppercase">Total</th>
+                        <th class="px-4 py-2 text-right text-sm font-medium text-gray-500 uppercase">Aksi</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="bg-white divide-y divide-gray-200">
                     <?php
-                    $currentSaldo = 0;
-                    foreach ($transactions as $index => $transaction) {
-                        $currentSaldo += $transaction['masuk'] - $transaction['keluar'];
+                    $currentTotal = 0;
+                    foreach ($transactions as $transaction) {
+                        $currentTotal += $transaction['masuk'] - $transaction['keluar'];
                     ?>
                         <tr>
-                            <td>
-                                <input type="date" name="transaction_date[]" value="<?= htmlspecialchars($transaction['transaction_date']) ?>">
+                            <td class="px-4 py-2"><?= date('j F Y', strtotime($transaction['transaction_date'])) ?></td>
+                            <td class="px-4 py-2"><?= htmlspecialchars($transaction['description']) ?></td>
+                            <td class="px-4 py-2 text-green-500 text-right"><?= number_format($transaction['masuk'], 2) ?></td>
+                            <td class="px-4 py-2 text-red-500 text-right"><?= number_format($transaction['keluar'], 2) ?></td>
+                            <td class="px-4 py-2 text-right">
+                                <span class="bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded">
+                                    <?= number_format($currentTotal, 2) ?>
+                                </span>
                             </td>
-                            <td>
-                                <input type="text" name="description[]" value="<?= htmlspecialchars($transaction['description']) ?>">
+                            <td class="px-4 py-2 text-right">
+                                <button class="edit-btn text-blue-600" data-id="<?= $transaction['id'] ?>">Edit</button>
+                                <button class="delete-btn text-red-600" data-id="<?= $transaction['id'] ?>">Hapus</button>
                             </td>
-                            <td>
-                                <input type="number" name="masuk[]" step="0.01" value="<?= htmlspecialchars($transaction['masuk']) ?>" class="debit">
-                            </td>
-                            <td>
-                                <input type="number" name="keluar[]" step="0.01" value="<?= htmlspecialchars($transaction['keluar']) ?>" class="credit">
-                            </td>
-                            <td>
-                                <span class="saldo"><?= number_format($currentSaldo, 2) ?></span>
-                            </td>
-                            <input type="hidden" name="id[]" value="<?= $transaction['id'] ?>">
                         </tr>
                     <?php } ?>
                 </tbody>
             </table>
-            <button type="button" id="saveButton" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-                Simpan
-            </button>
-        </form>
+        </div>
     </div>
 
     <script>
-        const table = document.getElementById('transactionTable');
-        const saveButton = document.getElementById('saveButton');
+        const form = document.getElementById('transactionForm');
 
-        // Recalculate saldo on input change
-        table.addEventListener('input', () => {
-            const rows = table.querySelectorAll('tbody tr');
-            let saldo = 0;
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-            rows.forEach(row => {
-                const debit = parseFloat(row.querySelector('.debit').value) || 0;
-                const credit = parseFloat(row.querySelector('.credit').value) || 0;
+            const formData = new FormData(form);
+            const action = formData.get('id') ? 'edit' : 'add';
+            formData.append('action', action);
 
-                saldo += debit - credit;
-                row.querySelector('.saldo').textContent = saldo.toFixed(2);
+            try {
+                const response = await axios.post('', formData);
+                if (response.data.status === 'success') {
+                    alert(`Transaksi berhasil ${action === 'add' ? 'ditambahkan' : 'diperbarui'}!`);
+                    location.reload();
+                } else {
+                    alert('Gagal menyimpan transaksi.');
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Terjadi kesalahan.');
+            }
+        });
+
+        document.querySelectorAll('.edit-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const id = button.getAttribute('data-id');
+                const row = button.closest('tr');
+                const cells = row.querySelectorAll('td');
+                document.getElementById('transaction_id').value = id;
+                document.getElementById('transaction_date').value = cells[0].innerText.trim();
+                document.getElementById('description').value = cells[1].innerText.trim();
+                document.getElementById('masuk').value = cells[2].innerText.replace(/,/g, '');
+                document.getElementById('keluar').value = cells[3].innerText.replace(/,/g, '');
             });
         });
 
-        // Save data to the database
-        saveButton.addEventListener('click', async () => {
-            const formData = new FormData(document.getElementById('transactionForm'));
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', async (e) => {
+                if (!confirm('Apakah Anda yakin ingin menghapus transaksi ini?')) return;
 
-            try {
-                const response = await axios.post('/stockopname/save_transactions.php', formData);
-                alert('Data berhasil disimpan!');
-                location.reload();
-            } catch (error) {
-                console.error(error);
-                alert('Terjadi kesalahan saat menyimpan data.');
-            }
+                const id = button.getAttribute('data-id');
+                try {
+                    const response = await axios.post('', new URLSearchParams({ action: 'delete', id }));
+                    if (response.data.status === 'success') {
+                        alert('Transaksi berhasil dihapus!');
+                        location.reload();
+                    } else {
+                        alert('Gagal menghapus transaksi.');
+                    }
+                } catch (error) {
+                    console.error(error);
+                    alert('Terjadi kesalahan.');
+                }
+            });
         });
     </script>
 </body>

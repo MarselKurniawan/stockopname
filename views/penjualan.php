@@ -20,6 +20,9 @@ include_once 'interface/header.php';
   <span id="hs-soft-color-success-label" class="font-bold">Alert!</span> Anda sedang menambah stok.
 </div>
 
+<div id="notificationContainer" class="absolute z-[100] top-0 right-0 mt-4 mr-4 space-y-4"></div>
+
+
 <!-- Card Section -->
 <div class="max-w-8xl px-2 py-4 sm:px-6 lg:px-8 lg:py-14 mx-auto " id="form-div">
   <!-- Card -->
@@ -91,29 +94,6 @@ include_once 'interface/header.php';
           </span>
         </div>
       </div>
-      <!-- SO Detail Section -->
-      <!-- <div class="py-6 first:pt-0 last:pb-0 border-t first:border-transparent border-gray-200">
-        <label class="inline-block text-sm font-medium">SO Detail</label>
-        <div class="mt-2 space-y-3">
-          <div class="flex flex-col sm:flex-row gap-3">
-            <select id="productSelect"
-              class="py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500">
-              <option selected>Select Produk</option>
-            </select>
-            <input type="text" id="harga" name="Harga"
-              class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500"
-              placeholder="Harga">
-            <input type="text" id="jumlah" name="jumlah"
-              class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500"
-              placeholder="Jumlah">
-          </div>
-          <input type="date" id="tanggal"
-            class="py-2 px-3 pe-11 block w-80 border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500"
-            placeholder="Tanggal Masuk">
-        </div>
-      </div> -->
-
-      <!-- SO Detail Section -->
       <div class="py-6 first:pt-0 last:pb-0 border-t first:border-transparent border-gray-200">
         <label class="inline-block text-sm font-medium">SO Detail</label>
         <div id="soDetailContainer" class="mt-2 space-y-3">
@@ -191,7 +171,8 @@ include_once 'interface/header.php';
             </div>
           </div>
           <!-- End Header -->
-
+          <input id="searchInput" type="text" placeholder="Cari..."
+            class="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" />
           <!-- Table -->
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
@@ -209,6 +190,14 @@ include_once 'interface/header.php';
                   <div class="flex items-center gap-x-2">
                     <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
                       Nama Toko
+                    </span>
+                  </div>
+                </th>
+
+                <th scope="col" class="px-6 py-3 text-start">
+                  <div class="flex items-center gap-x-2">
+                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
+                      ID Pengiriman
                     </span>
                   </div>
                 </th>
@@ -254,6 +243,8 @@ include_once 'interface/header.php';
 
             </tbody>
           </table>
+          <div id="paginationContainer" class="mt-4 flex justify-center"></div>
+
           <!-- End Table -->
           <!-- Modal untuk detail produk -->
           <div id="detailModal" style="z-index: 90;"
@@ -500,16 +491,73 @@ include_once 'interface/header.php';
       })
         .then(response => response.json())
         .then(data => {
-          if (data.status === 'success') {  // Pastikan 'success' sesuai dengan format dari API
-            alert("Data saved successfully!");
-            // Optionally clear the form or reload the page
+          const notificationContainer = document.getElementById("notificationContainer");
+
+          // Periksa apakah notificationContainer ada
+          if (notificationContainer) {
+            // Create notification element
+            const notification = document.createElement("div");
+            notification.classList.add("p-4", "rounded-lg", "shadow-lg", "w-80", "space-x-3", "flex", "items-center", "justify-between");
+
+            if (data.status === 'success') {  // Pastikan 'success' sesuai dengan format dari API
+              notification.classList.add("bg-green-100", "text-green-800");
+              notification.innerHTML = `
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M4 12l2 2 4-4M15 21h3a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3" />
+              </svg>
+              <span>Data saved successfully!</span>
+            `;
+            } else {
+              notification.classList.add("bg-red-100", "text-red-800");
+              notification.innerHTML = `
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              <span>Failed to save data. ${data.message || "Unknown error occurred."}</span>
+            `;
+            }
+
+            // Append notification to container
+            notificationContainer.appendChild(notification);
+
+            // Automatically hide notification after 3 seconds
+            setTimeout(() => {
+              notification.classList.add("opacity-0");
+              setTimeout(() => notification.remove(), 500);  // Remove after fade-out
+            }, 3000);
+
+            // Optionally reload the page if success
+            if (data.status === 'success') {
+              setTimeout(() => {
+                window.location.reload();  // Refresh the page after 3 seconds
+              }, 3500);
+            }
           } else {
-            alert("Failed to save data. " + (data.message || "Unknown error occurred."));
+            console.error("Notification container not found!");
           }
         })
         .catch(error => {
           console.error("Error:", error);
-          alert("An error occurred while saving data.");
+          const notificationContainer = document.getElementById("notificationContainer");
+
+          if (notificationContainer) {
+            // Create error notification element
+            const notification = document.createElement("div");
+            notification.classList.add("p-4", "rounded-lg", "shadow-lg", "w-80", "space-x-3", "flex", "items-center", "justify-between", "bg-red-100", "text-red-800");
+            notification.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            <span>An error occurred while saving data.</span>
+          `;
+            notificationContainer.appendChild(notification);
+
+            // Automatically hide notification after 3 seconds
+            setTimeout(() => {
+              notification.classList.add("opacity-0");
+              setTimeout(() => notification.remove(), 500);  // Remove after fade-out
+            }, 3000);
+          }
         });
     });
   });
@@ -518,9 +566,10 @@ include_once 'interface/header.php';
 
 
 
+
   document.addEventListener("DOMContentLoaded", function () {
     // Load cities when page loads
-    fetch("/stockopname//api/cities_select.php")
+    fetch("/stockopname/api/cities_select.php")
       .then(response => response.json())
       .then(data => {
         let citySelect = document.getElementById("citySelect");
@@ -571,44 +620,45 @@ include_once 'interface/header.php';
       })
       .then(data => {
         const tableBody = document.getElementById('stokTable');
-        const groupedData = groupBy(data.data, ['nama_toko', 'tanggal']); // Mengelompokkan data
+        const groupedData = groupBy(data.data, ['nama_toko', 'tanggal']);
 
-        // Mengisi tabel utama
         Object.keys(groupedData).forEach(key => {
           const [nama_toko, tanggal] = key.split('|');
           const group = groupedData[key];
-
-          // Hitung total jumlah produk
           const totalJumlah = group.reduce((sum, item) => sum + item.jumlah, 0);
-
-          // Ambil tanggal tagihan dari produk pertama dalam grup
           const tglTagihan = group[0].tgl_tagihan;
+          const isDone = group.some(item => item.status === 'done');
+          let badgeClass = '';
+          let badgeContent = '';
+          const idPengiriman = group[0].id_pengiriman;
 
-          // Format tanggal
-          const formattedTanggal = formatTanggal(tanggal);
-          const formattedTglTagihan = formatTanggal(tglTagihan);
+          if (isDone) {
+            badgeClass = 'bg-blue-100 gap-1 inline-flex text-center items-center text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full';
+            badgeContent = 'Sudah Terbayar';
+          } else {
+            badgeClass = getBadgeClass(tglTagihan);
+            badgeContent = formatTanggal(tglTagihan);
+          }
 
-          // Tentukan warna badge berdasarkan tanggal tagihan
-          const badgeClass = getBadgeClass(tglTagihan);
-
-          // Membuat baris tabel
           let row = `
-                <tr>
-                    <td class="p-6 text-sm">${group[0].nama_kota}</td>
-                    <td class="p-6 text-sm">${nama_toko}</td>
-                    <td class="p-6 text-sm">${formattedTanggal}</td>
-                    <td class="p-6 text-sm">${totalJumlah}</td>
-                    <td class="p-6 text-sm">
-                        <span class="${badgeClass}">${formattedTglTagihan}</span>
-                    </td>
-                    <td class="p-6 text-sm">
-                        <button 
-                            class="detail-btn px-4 py-2 bg-blue-500 text-white rounded" 
-                            data-detail='${JSON.stringify(group)}'>
-                            Detail
-                        </button>
-                    </td>
-                </tr>`;
+          <tr>
+            <td class="p-6 text-sm">${group[0].nama_kota}</td>
+            <td class="p-6 text-sm">${nama_toko}</td>
+            <td class="p-6 text-sm inline-flex gap-1">
+              <span id="idPengirimanText" class="text-red-800">${idPengiriman}</span>
+            </td>
+            <td class="p-6 text-sm">${formatTanggal(tanggal)}</td>
+            <td class="p-6 text-sm">${totalJumlah}</td>
+            <td class="p-6 text-sm">
+              <span class="${badgeClass}">${badgeContent}</span>
+            </td>
+            <td class="p-6 text-sm">
+              <button class="detail-btn px-4 py-2 bg-blue-500 text-white rounded" data-detail='${JSON.stringify(group)}'>
+                Detail
+              </button>
+            </td>
+          </tr>
+        `;
           tableBody.insertAdjacentHTML('beforeend', row);
         });
 
@@ -619,10 +669,46 @@ include_once 'interface/header.php';
             openDetailModal(detailData);
           });
         });
+
+        // Event listener untuk tombol delete
+        document.querySelectorAll('.delete-icon').forEach(icon => {
+          icon.addEventListener('click', function () {
+            const idToDelete = this.getAttribute('data-id');
+            confirmDelete(idToDelete);
+          });
+        });
       })
       .catch(error => {
         console.error('Error fetching stock data:', error);
       });
+
+    // Fungsi konfirmasi untuk menghapus data
+    function confirmDelete(idPengiriman) {
+      if (confirm(`Apakah Anda yakin ingin menghapus pengiriman dengan ID ${idPengiriman}?`)) {
+        // Kirim request DELETE ke server untuk menghapus data
+        fetch(`/stockopname/api/pengiriman.php?csrf_token=${csrfToken}&id_pengiriman=${idPengiriman}`, {
+          method: 'DELETE'
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              alert(`ID Pengiriman ${idPengiriman} berhasil dihapus.`);
+              // Menghapus baris tabel setelah berhasil dihapus
+              const rowToDelete = document.querySelector(`svg[data-id="${idPengiriman}"]`).closest('tr');
+              rowToDelete.remove();
+            } else {
+              alert('Gagal menghapus pengiriman.');
+            }
+          })
+          .catch(error => {
+            console.error('Error deleting pengiriman:', error);
+            alert('Terjadi kesalahan saat menghapus pengiriman.');
+          });
+      }
+    }
+
+
+
 
     // Fungsi untuk membuka modal detail
     function openDetailModal(detailData) {
@@ -637,7 +723,7 @@ include_once 'interface/header.php';
 
         let row = `
             <tr>
-                <td class="p-4">${item.nama_produk}</td>
+                <td class="p-4">${item.display_produk}</td>
                 <td class="p-4">${hargaFormatted}</td>
                 <td class="p-4">${item.jumlah}</td>
             </tr>`;
@@ -683,11 +769,88 @@ include_once 'interface/header.php';
         return 'bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full';
       } else if (diffInDays <= 7) {
         return 'bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full';
-      } else   {
+      } else {
         return 'bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full';
-      } 
+      }
     }
   });
+
+  // Pagination dan filter
+  document.addEventListener('DOMContentLoaded', function () {
+    const rowsPerPage = 5; // Jumlah baris per halaman
+    const tableBody = document.getElementById('stokTable');
+    const paginationContainer = document.getElementById('paginationContainer');
+    const searchInput = document.getElementById('searchInput'); // Input pencarian
+
+    let currentPage = 1;
+    let rows = [...tableBody.querySelectorAll('tr')]; // Ambil semua baris dari tabel
+
+    // Fungsi untuk menampilkan baris sesuai halaman
+    function displayRows(page = 1) {
+      const start = (page - 1) * rowsPerPage;
+      const end = start + rowsPerPage;
+
+      rows.forEach((row, index) => {
+        row.style.display = index >= start && index < end ? '' : 'none';
+      });
+    }
+
+    // Fungsi untuk membuat tombol pagination
+    function createPagination() {
+      paginationContainer.innerHTML = ''; // Kosongkan pagination
+      const totalPages = Math.ceil(rows.length / rowsPerPage);
+
+      for (let i = 1; i <= totalPages; i++) {
+        const button = document.createElement('button');
+        button.textContent = i;
+        button.className =
+          'mx-1 px-3 py-1 bg-blue-500 text-white rounded focus:outline-none hover:bg-blue-700';
+
+        if (i === currentPage) {
+          button.classList.add('bg-blue-700');
+        }
+
+        button.addEventListener('click', () => {
+          currentPage = i;
+          displayRows(currentPage);
+          createPagination();
+        });
+
+        paginationContainer.appendChild(button);
+      }
+    }
+
+    // Fungsi pencarian/filter tabel
+    searchInput.addEventListener('input', function () {
+      const searchTerm = this.value.toLowerCase();
+
+      // Filter baris berdasarkan teks pencarian
+      rows.forEach((row) => {
+        const rowText = row.textContent.toLowerCase();
+        row.style.display = rowText.includes(searchTerm) ? '' : 'none';
+      });
+
+      // Reset pagination saat pencarian
+      if (searchTerm === '') {
+        rows = [...tableBody.querySelectorAll('tr')]; // Kembalikan semua baris
+        currentPage = 1; // Reset ke halaman pertama
+        displayRows(currentPage); // Tampilkan semua data dengan pagination
+        createPagination(); // Perbarui pagination
+      } else {
+        rows = [...tableBody.querySelectorAll('tr')].filter(
+          (row) => row.style.display !== 'none'
+        );
+        currentPage = 1; // Reset ke halaman pertama
+        displayRows(currentPage);
+        createPagination();
+      }
+    });
+
+    // Inisialisasi
+    displayRows(currentPage);
+    createPagination();
+  });
+
 
 
 </script>

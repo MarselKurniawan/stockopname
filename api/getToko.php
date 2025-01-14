@@ -6,11 +6,6 @@ require_once '../core/func/csrf_protection.php';
 require_once '../core/v2/database.php';
 require_once '../core/v2/config.php';
 
-// Periksa CSRF token
-if (!isset($_GET['csrf_token']) || !verify_csrf_token($_GET['csrf_token'])) {
-    echo json_encode(['status' => 'error', 'message' => 'Invalid CSRF token']);
-    exit;
-}
 
 // Koneksi database
 $conn = db_connect();

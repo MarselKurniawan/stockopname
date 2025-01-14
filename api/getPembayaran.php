@@ -21,32 +21,38 @@ if ($conn->connect_error) {
 
 // Query untuk mengambil data pengiriman dan retur
 $stmt = $conn->prepare("
-    SELECT 
-        pengiriman.id AS id_pengiriman,
-        pengiriman.tanggal AS tanggal_pengiriman,
-        pengiriman.status AS status_pengiriman,
-        produk.id AS produk_id,
-        produk.nama_produk,
-        produk.kemasan,
-        produk.ukuran_stoples,
-        produk.ukuran_mika,
-        produk.ukuran_paket,
-        produk.harga,
-        pengiriman.jumlah AS jumlah_produk,
-        toko.id AS toko_id,
-        toko.nama_toko,
-        kota.nama_kota,
-        retur.id AS id_retur,
-        retur.jumlah_retur,
-        retur.total_retur_nominal
-    FROM pengiriman
-    JOIN produk ON pengiriman.produk_id = produk.id
-    JOIN toko ON pengiriman.toko_id = toko.id
-    JOIN kota ON toko.kota_id = kota.id
-    LEFT JOIN retur 
-        ON retur.id_pengiriman = pengiriman.id_pengiriman 
-        AND retur.produk_id = pengiriman.produk_id
-    ORDER BY pengiriman.tanggal, toko.id;
+ SELECT 
+    pengiriman.id_pengiriman AS id_pengiriman,
+    pengiriman.tanggal AS tanggal_pengiriman,
+    pengiriman.status AS status_pengiriman,
+    produk.id AS produk_id,
+    produk.nama_produk,
+    produk.kemasan,
+    produk.ukuran_stoples,
+    produk.ukuran_mika,
+    produk.ukuran_paket,
+    produk.harga,
+    pengiriman.jumlah AS jumlah_produk,
+    toko.id AS toko_id,
+    toko.nama_toko,
+    kota.nama_kota,
+    retur.id AS id_retur,
+    retur.jumlah_retur,
+    retur.total_retur_nominal,
+    pengiriman.discount,
+    pengiriman.tgl_tagihan
+FROM pengiriman
+JOIN produk ON pengiriman.produk_id = produk.id
+JOIN toko ON pengiriman.toko_id = toko.id
+JOIN kota ON toko.kota_id = kota.id
+LEFT JOIN retur 
+    ON retur.id_pengiriman = pengiriman.id_pengiriman
+    AND retur.produk_id = pengiriman.produk_id
+ORDER BY 
+    MAX(pengiriman.tanggal) OVER (PARTITION BY kota.nama_kota) DESC, -- Kota dengan pengiriman terbaru diurutkan duluan
+    kota.nama_kota ASC,                                             -- Mengelompokkan berdasarkan nama kota
+    pengiriman.tanggal DESC;                                        -- Data dalam kota diurutkan berdasarkan tanggal terbaru
+
 ");
 
 if (!$stmt) {
@@ -80,10 +86,13 @@ while ($row = $result->fetch_assoc()) {
     if (!isset($data_pengiriman[$group_key])) {
         $data_pengiriman[$group_key] = [
             'toko_id' => $row['toko_id'],
+            'id_pengiriman' => $row['id_pengiriman'],
             'nama_toko' => $row['nama_toko'],
             'nama_kota' => $row['nama_kota'],
+            'discount' => $row['discount'],
             'tanggal_pengiriman' => $row['tanggal_pengiriman'],
             'status_pengiriman' => $row['status_pengiriman'],
+            'tgl_tagihan' => $row['tgl_tagihan'],
             'produk' => [],
             'retur' => []
         ];

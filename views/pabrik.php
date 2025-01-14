@@ -1,417 +1,369 @@
 <?php
-session_start();
-$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 require_once __DIR__ . '/../core/v2/config.php';
 require_once __DIR__ . '/../core/v2/database.php';
-require_once __DIR__ . '/../core/func/csrf_protection.php';
 
+include_once 'interface/header.php'; // Include header
 
-error_log('Token di sesi: ' . $_SESSION['csrf_token']);
-error_log('Token yang dikirim: ' . $_SESSION['csrf_token']);
+$conn = db_connect(); // Koneksi ke database
 
+// Ambil data produk untuk dropdown
+$produkList = [];
+try {
+  $stmt = $conn->prepare("SELECT id, nama_produk, kemasan, ukuran_stoples, ukuran_mika, ukuran_paket FROM produk");
+  $stmt->execute();
+  $result = $stmt->get_result();
 
-include_once 'interface/header.php';
+  while ($row = $result->fetch_assoc()) {
+    // Tentukan kemasan yang tersedia
+    $packaging = $row['ukuran_stoples'] ?: ($row['ukuran_mika'] ?: $row['ukuran_paket']);
+    if ($packaging) {
+      $produkList[] = [
+        'id' => $row['id'],
+        'display_name' => $row['nama_produk'] . ' ' . $row['kemasan'] . ' ' . $packaging,
+      ];
+    }
+  }
+} catch (Exception $e) {
+  die("Error fetching products: " . $e->getMessage());
+}
+
+// Proses penyimpanan form (Add/Edit)
+$message = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  $produk_id = $_POST['produk_id'];
+  $hasil_roti = $_POST['hasil_roti'];
+  $tanggal = $_POST['tanggal'];
+
+  if (isset($_POST['id_pabrik'])) {
+    // Edit data
+    $id_pabrik = $_POST['id_pabrik'];
+    try {
+      $stmt = $conn->prepare("UPDATE pabrik SET produk_id = ?, hasil_roti = ?, tanggal = ? WHERE id_pabrik = ?");
+      $stmt->bind_param('issi', $produk_id, $hasil_roti, $tanggal, $id_pabrik);
+      $stmt->execute();
+      $message = "Data berhasil diupdate!";
+    } catch (Exception $e) {
+      $message = "Gagal mengupdate data: " . $e->getMessage();
+    }
+  } else {
+    // Add data
+    try {
+      $stmt = $conn->prepare("INSERT INTO pabrik (produk_id, hasil_roti, tanggal) VALUES (?, ?, ?)");
+      $stmt->bind_param('iis', $produk_id, $hasil_roti, $tanggal);
+      $stmt->execute();
+      $message = "Data berhasil disimpan!";
+    } catch (Exception $e) {
+      $message = "Gagal menyimpan data: " . $e->getMessage();
+    }
+  }
+}
+
+// Proses delete data
+if (isset($_GET['delete'])) {
+  $id_pabrik = $_GET['delete'];
+  try {
+    $stmt = $conn->prepare("DELETE FROM pabrik WHERE id_pabrik = ?");
+    $stmt->bind_param('i', $id_pabrik);
+    $stmt->execute();
+    $message = "Data berhasil dihapus!";
+  } catch (Exception $e) {
+    $message = "Gagal menghapus data: " . $e->getMessage();
+  }
+}
+
+// Ambil data hasil produksi
+$dataProduksi = [];
+try {
+  $stmt = $conn->prepare("
+        SELECT 
+            pabrik.id_pabrik, 
+            produk.nama_produk, 
+            produk.kemasan, 
+            pabrik.hasil_roti, 
+            pabrik.tanggal,
+            produk.ukuran_stoples, 
+            produk.ukuran_mika, 
+            produk.ukuran_paket
+        FROM 
+            pabrik 
+        JOIN 
+            produk 
+        ON 
+            pabrik.produk_id = produk.id
+    ");
+  $stmt->execute();
+  $result = $stmt->get_result();
+
+  while ($row = $result->fetch_assoc()) {
+    // $dataProduksi[] = $row;
+
+    $packaging = $row['ukuran_stoples'] ?: ($row['ukuran_mika'] ?: $row['ukuran_paket']);
+
+    if ($packaging) {
+      $dataProduksi[] = [
+        'id_pabrik' => $row['id_pabrik'],
+        'kemasan' => $row['kemasan'],
+        'hasil_roti' => $row['hasil_roti'],
+        'tanggal' => $row['tanggal'],
+        'display_name' => $row['nama_produk'] . ' ' . $row['kemasan'] . ' ' . $packaging,
+
+      ];
+    }
+  }
+} catch (Exception $e) {
+  die("Error fetching production data: " . $e->getMessage());
+}
+
+// Format tanggal ke format "1 Januari 2025"
+function formatTanggal($tanggal)
+{
+  $date = new DateTime($tanggal);
+  return $date->format('j F Y');
+}
 ?>
-<!-- Pastikan ada tempat untuk menyimpan token CSRF -->
-<!-- Card Section -->
-<div class="max-w-8xl px-2 py-4 sm:px-6 lg:px-8 lg:py-14 mx-auto " id="form-div">
-  <!-- Card -->
-  <div class="bg-white rounded-xl shadow p-4 sm:p-7">
-    <div class="text-center mb-8">
-      <h2 class="text-2xl md:text-3xl font-bold text-gray-800">
-        Input Barang
-      </h2>
-      <p class="text-sm text-gray-600">
 
-      </p>
-    </div>
-    <form id="addStockForm" class="space-y-3">
-      <input type="hidden" id="csrf_token" value="<?php echo generate_csrf_token(); ?>">
+<!DOCTYPE html>
+<html lang="en">
 
-      <!-- Toko Section -->
-      <div class="py-6 first:pt-0 last:pb-0 border-t first:border-transparent border-gray-200">
-        <label class="inline-block text-sm font-medium">Toko</label>
-        <div class="mt-2 space-y-3">
-          <div class="flex flex-col sm:flex-row gap-3">
-            <select id="produkSelect"
-              class="py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500">
-              <option selected>Select Produk</option>
-            </select>
+<head>
+  <title>Data Hasil Produksi</title>
+  <style>
+    /* Membuat tabel menjadi responsif */
+    @media (max-width: 768px) {
+      table {
+        width: 100%;
+        overflow-x: auto;
+        display: block;
+      }
 
-            <select id="bakerSelect"
-              class="py-2 px-3 pe-9 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500">
-              <option selected>Select Pembuat</option>
-            </select>
+      th,
+      td {
+        white-space: nowrap;
+        word-wrap: break-word;
+      }
+
+      th,
+      td {
+        padding: 8px;
+      }
+
+      /* Membuat search input responsif */
+      #searchInput {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-white ">
+  <div class="container mx-auto p-10 max-w-8xl">
+    <h2 class="text-2xl font-semibold mb-5">
+      <?php if (isset($_GET['edit'])): ?>Edit Data Hasil Produksi<?php else: ?>Input Hasil Produksi<?php endif; ?>
+    </h2>
+
+    <?php if (!empty($message)): ?>
+      <div class="p-4 mb-5 text-sm text-green-800 bg-green-200 rounded-lg">
+        <?= htmlspecialchars($message) ?>
+      </div>
+    <?php endif; ?>
+
+    <form action="" method="POST" class="space-y-6">
+      <?php if (isset($_GET['edit'])): ?>
+        <?php
+        $id_pabrik = $_GET['edit'];
+        $stmt = $conn->prepare("SELECT * FROM pabrik WHERE id_pabrik = ?");
+        $stmt->bind_param('i', $id_pabrik);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $data = $result->fetch_assoc();
+        ?>
+        <input type="hidden" name="id_pabrik" value="<?= $data['id_pabrik'] ?>">
+        <div class="bg-yellow-50 border border-yellow-200 text-sm text-yellow-800 rounded-lg p-4" role="alert"
+          tabindex="-1" aria-labelledby="hs-with-description-label">
+          <div class="flex">
+            <div class="shrink-0">
+              <svg class="shrink-0 size-4 mt-0.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+                <path d="M12 9v4"></path>
+                <path d="M12 17h.01"></path>
+              </svg>
+            </div>
+            <div class="ms-4">
+              <h3 id="hs-with-description-label" class="text-sm font-semibold">
+                Masih edit data ini
+              </h3>
+            </div>
           </div>
         </div>
+      <?php endif; ?>
+
+      <div>
+        <label for="produkSelect" class="block text-sm font-medium text-gray-700">Pilih Produk</label>
+        <select id="produkSelect" name="produk_id"
+          class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
+          required>
+          <option value="" selected>Pilih Produk</option>
+          <?php foreach ($produkList as $produk): ?>
+            <option value="<?= $produk['id'] ?>" <?php if (isset($data) && $data['produk_id'] == $produk['id'])
+                echo 'selected'; ?>>
+              <?= htmlspecialchars($produk['display_name']) ?>
+            </option>
+          <?php endforeach; ?>
+        </select>
       </div>
 
-      <!-- SO Detail Section -->
-      <div class="py-6 first:pt-0 last:pb-0 border-t first:border-transparent border-gray-200">
-        <label class="inline-block text-sm font-medium">SO Detail</label>
-        <div class="mt-2 space-y-3">
-          <div class="flex flex-col sm:flex-row gap-3">
-            <input type="text" id="jumlah" name="jumlah"
-              class="py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500"
-              placeholder="Jumlah">
-            <input type="date" id="tanggal"
-              class="py-2 px-3 pe-11 block w-80 border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500"
-              placeholder="Tanggal Masuk">
-          </div>
-
-          <div class="flex flex-col sm:flex-row gap-3">
-            <input type="text" id="Jumlah Adonan" name="Jumlah Adonan"
-              class="py-2 px-3 pe-11 block w-lg border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500"
-              placeholder="Jumlah">
-            <p class="text-gray-700 font-bold">Adonan</p>
-          </div>
-        </div>
+      <div>
+        <label for="hasil_roti" class="block text-sm font-medium text-gray-700">Hasil Roti</label>
+        <input type="number" oninput="validateNumberInput(event)" id="hasil_roti" name="hasil_roti"
+          class="peer py-3 px-4 block w-full bg-gray-100 border-transparent rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
+          value="<?= isset($data) ? htmlspecialchars($data['hasil_roti']) : '' ?>" required>
       </div>
 
-      <!-- Submit Buttons -->
-      <div class="mt-5 flex justify-end gap-x-2">
-        <button type="button"
-          class="py-2 px-3 text-sm font-medium rounded-lg border bg-white text-gray-800 hover:bg-gray-50">Cancel</button>
+      <div>
+        <label for="tanggal" class="block text-sm font-medium text-gray-700">Tanggal Produksi</label>
+        <input type="date" id="tanggal" name="tanggal"
+          class="peer py-3 px-4 block w-full bg-gray-100 border-transparent rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
+          value="<?= isset($data) ? $data['tanggal'] : '' ?>" required>
+      </div>
+
+      <div class="flex justify-between">
         <button type="submit"
-          class="py-2 px-3 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700">Save
-          changes</button>
+          class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700">Simpan</button>
+        <?php if (isset($_GET['edit'])): ?>
+          <a href="/stockopname/pabrik"
+            class="px-6 py-2 bg-gray-400 text-white rounded-lg shadow hover:bg-gray-500">Batal</a>
+        <?php endif; ?>
       </div>
     </form>
-
-    <!-- </d -->
   </div>
-  <!-- End Card -->
-</div>
-<!-- End Card Section -->
-<!-- Card Section -->
-<div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-2 mx-auto">
-  <!-- Grid -->
-  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
 
-    <!-- Card -->
-    <div class="flex flex-col space-x-4 w-full bg-white border shadow-sm rounded-xl" style="width: 60vh !important;">
-      <div class="p-4 md:p-5">
-        <div class="flex justify-between">
-          <div class="flex items-center gap-x-2">
-            <p class="text-xs uppercase tracking-wide text-gray-500">
-              roti yang dihasilkan
-            </p>
-          </div>
-          <div class="">
-            <div class="m-1 hs-dropdown [--trigger:hover] relative inline-flex">
-              <button id="hs-dropdown-hover-event" type="button"
-                class="hs-dropdown-toggle py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none"
-                aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
-                Select Date
-                <svg class="hs-dropdown-open:rotate-180 size-4" xmlns="http://www.w3.org/2000/svg" width="24"
-                  height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                  stroke-linecap="round" stroke-linejoin="round">
-                  <path d="m6 9 6 6 6-6" />
-                </svg>
-              </button>
-              <div
-                class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-60 bg-white shadow-md rounded-lg mt-2 after:h-4 after:absolute after:-bottom-4 after:start-0 after:w-full before:h-4 before:absolute before:-top-4 before:start-0 before:w-full"
-                role="menu" aria-orientation="vertical" aria-labelledby="hs-dropdown-hover-event">
-                <div class="p-1 space-y-0.5">
-                  <!-- Date options will be dynamically populated here -->
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="mt-1 flex items-center gap-x-2">
-      <h3 class="text-xl sm:text-2xl font-medium text-gray-800" id="tableBody">
-        23
-      </h3>
-    </div>
+  <div class="container mx-auto p-10">
+    <h2 class="text-2xl font-semibold mb-5">Data Hasil Produksi</h2>
+
+    <table class="min-w-full bg-white border border-gray-300 rounded-lg table-auto">
+      <!-- Input search untuk filter data -->
+      <thead class="bg-gray-100">
+        <tr>
+          <th colspan="8" class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+            <input type="text" id="searchInput" class="px-4 py-2 border border-gray-300 rounded-lg"
+              placeholder="Search..." />
+          </th>
+        </tr>
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">No</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Nama Produk</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Kemasan</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Hasil Roti</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Hasil Dos</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Satuan</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Tanggal</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <?php if (count($dataProduksi) > 0): ?>
+          <?php foreach ($dataProduksi as $index => $data): ?>
+            <tr class="<?= $index % 2 === 0 ? 'bg-gray-50' : 'bg-white' ?>" class="table-row">
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700"><?= $index + 1 ?></td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700"><?= htmlspecialchars($data['display_name']) ?>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700"><?= htmlspecialchars($data['kemasan']) ?></td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700"><?= htmlspecialchars($data['hasil_roti']) ?>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                <?php
+                $hasil_dos = floor($data['hasil_roti'] / 12); // Hasil Dos
+                echo $hasil_dos;
+                ?> Dos
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                <?php
+                $satuan = $data['hasil_roti'] - ($hasil_dos * 12); // Satuan (sisa dari hasil roti)
+                echo $satuan;
+                ?>
+                Pcs
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700"><?= formatTanggal($data['tanggal']) ?></td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                <a href="?edit=<?= $data['id_pabrik'] ?>" class="text-blue-600 hover:text-blue-800">Edit</a> |
+                <a href="?delete=<?= $data['id_pabrik'] ?>" class="text-red-600 hover:text-red-800"
+                  onclick="return confirm('Yakin ingin menghapus data ini?')">Delete</a>
+              </td>
+            </tr>
+          <?php endforeach; ?>
+        <?php else: ?>
+          <tr>
+            <td colspan="8" class="px-6 py-4 text-center text-sm text-gray-500">Tidak ada data hasil produksi.</td>
+          </tr>
+        <?php endif; ?>
+      </tbody>
+    </table>
+
   </div>
-</div>
-</div>
-<!-- End Grid -->
-</div>
-<!-- End Card Section -->
 
+  <script>
 
-<!-- Table Section -->
-<div class="max-w-[85rem] py-4 sm:px-6 lg:px-8 lg:py-4 mx-auto">
-  <!-- Card -->
-  <div class="flex flex-col">
-    <div class="-m-1.5 overflow-x-auto">
-      <div class="p-1.5 min-w-full inline-block align-middle">
-        <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-          <!-- Header -->
-          <div class="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-b border-gray-200">
-            <div>
-              <h2 class="text-xl font-semibold text-gray-800">
-                Pabrik
-              </h2>
-              <p class="text-sm text-gray-600">
-                Add, edit and more.
-              </p>
-            </div>
+    // Fungsi untuk pencarian di seluruh tabel
+    document.getElementById('searchInput').addEventListener('input', function () {
+      const searchValue = this.value.toLowerCase();
+      const rows = document.querySelectorAll('#tableBody tr');  // Mendapatkan semua baris data dalam tabel
 
-            <div>
-              <div class="inline-flex gap-x-2">
-                <a class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
-                  href="#">
-                  <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <path d="M5 12h14" />
-                    <path d="M12 5v14" />
-                  </svg>
-                  Add Data
-                </a>
-              </div>
-            </div>
-          </div>
-          <!-- End Header -->
+      rows.forEach(row => {
+        const cells = row.getElementsByTagName('td');
+        let rowMatches = false;
 
-          <!-- Table -->
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-              <tr>
-
-                <th scope="col" class="ps-6 lg:ps-3 xl:ps-6 px-6 py-3 text-start">
-                  <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      Produk
-                    </span>
-                  </div>
-                </th>
-
-                <th scope="col" class="px-6 py-3 text-start">
-                  <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      Toko
-                    </span>
-                  </div>
-                </th>
-                <th scope="col" class="px-6 py-3 text-start">
-                  <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      Kemasan
-                    </span>
-                  </div>
-                </th>
-                <th scope="col" class="px-6 py-3 text-start">
-                  <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      Ukuran
-                    </span>
-                  </div>
-                </th>
-
-                <th scope="col" class="px-6 py-3 text-start">
-                  <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      Produk Laku
-                    </span>
-                  </div>
-                </th>
-
-                <th scope="col" class="px-6 py-3 text-start">
-                  <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      Nominal Laku
-                    </span>
-                  </div>
-                </th>
-
-                <th scope="col" class="px-6 py-3 text-start">
-                  <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-                      Tanggal Keluar
-                    </span>
-                  </div>
-                </th>
-
-                <th scope="col" class="px-6 py-3 text-start">
-                  <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
-
-                    </span>
-                  </div>
-                </th>
-
-                <th scope="col" class="px-6 py-3 text-end"></th>
-              </tr>
-            </thead>
-            <input type="hidden" id="csrf_token" value="<?php echo generate_csrf_token(); ?>">
-
-            <tbody class="divide-y p-6 divide-gray-200" id="stokTable">
-
-            </tbody>
-          </table>
-          <!-- End Table -->
-
-          <!-- Footer -->
-          <div class="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-t border-gray-200">
-            <div>
-              <p class="text-sm text-gray-600">
-                <span class="font-semibold text-gray-800">12</span> results
-              </p>
-            </div>
-
-            <div>
-              <div class="inline-flex gap-x-2">
-                <button type="button"
-                  class="py-1.5 px-2 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-gray-50">
-                  <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <path d="m15 18-6-6 6-6" />
-                  </svg>
-                  Prev
-                </button>
-
-                <button type="button"
-                  class="py-1.5 px-2 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-gray-50">
-                  Next
-                  <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <path d="m9 18 6-6-6-6" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
-          <!-- End Footer -->
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- End Card -->
-</div>
-<!-- End Table Section -->
-
-
-
-<script>
-
-  document.addEventListener("DOMContentLoaded", function () {
-    // Load products when the page loads
-    loadProducts();
-
-    // Event listener for when the product is changed
-    document.getElementById("produkSelect").addEventListener("change", function () {
-      console.log("Selected product ID:", this.value);
-    });
-  });
-
-  function loadProducts() {
-    const productSelect = document.getElementById("produkSelect");
-
-    // Clear existing options to avoid duplicates
-    productSelect.innerHTML = '<option selected>Select Produk</option>';
-
-    fetch("/stockopname/api/products_select.php")
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`Network response was not ok: ${response.statusText}`);
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log("Fetched data:", data); // Check the fetched data
-
-        if (!Array.isArray(data)) {
-          console.error("Expected an array but received:", data);
-          return;
+        // Looping untuk memeriksa setiap cell
+        for (let i = 0; i < cells.length; i++) {
+          if (cells[i].textContent.toLowerCase().includes(searchValue)) {
+            rowMatches = true; // Jika ada kecocokan, baris akan ditampilkan
+            break;
+          }
         }
 
-        data.forEach(product => {
-          let option = document.createElement("option");
-          option.value = product.id;
-          option.text = product.display_name;
-          productSelect.add(option);
-        });
-      })
-      .catch(error => {
-        console.error("Error fetching products:", error);
+        // Menampilkan atau menyembunyikan baris berdasarkan kecocokan
+        if (rowMatches) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
       });
-  }
+    });
 
 
+    // Fungsi untuk menghitung hasil dos dan satuan
+    function calculateDosAndSatuan() {
+      const hasilRotiInput = document.getElementById('hasil_roti');
+      const hasilRoti = parseFloat(hasilRotiInput.value);
 
-  document.addEventListener("DOMContentLoaded", function () {
-    fetch("/stockopname/api/selectDates.php")
-      .then(response => response.json())
-      .then(data => {
-        const dropdownMenu = document.querySelector(".hs-dropdown-menu .p-1");
+      if (isNaN(hasilRoti)) {
+        return;
+      }
 
-        // Populate dropdown with dates
-        data.forEach(dateObj => {
-          let dateLink = document.createElement("a");
-          dateLink.className = "flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100";
-          dateLink.href = "#";
+      const hasilDos = Math.floor(hasilRoti / 12); // Hasil Dos
+      const satuan = hasilRoti - (hasilDos * 12); // Satuan (sisa)
 
-          // Parse the date and format as "9 November 2024"
-          const parsedDate = new Date(dateObj.tanggal);
-          const options = { day: 'numeric', month: 'long', year: 'numeric' };
-
-          // Check if the date is valid
-          dateLink.textContent = !isNaN(parsedDate) ? parsedDate.toLocaleDateString('id-ID', options) : "Invalid Date";
-
-          dropdownMenu.appendChild(dateLink);
-        });
-      })
-      .catch(error => console.error("Error fetching dates:", error));
-  });
-
-
-  document.addEventListener('DOMContentLoaded', function () {
-    const csrfToken = document.getElementById('csrf_token').value;
-
-    if (!csrfToken) {
-      console.error('CSRF token not found');
-      return;
+      // Menampilkan hasil dos dan satuan
+      document.getElementById('hasil_dos').textContent = hasilDos;
+      document.getElementById('satuan').textContent = satuan;
     }
 
-    fetch(`/stockopname/api/get_pabrik.php?csrf_token=${csrfToken}`, {
-      method: 'GET'
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then(data => {
-        const tableBody = document.getElementById('stokTable');
-        data.data.forEach(item => {
-          // Memformat harga menjadi ribuan
-          let hargaKeluarFormatted = new Intl.NumberFormat('id-ID', {
-            style: 'currency',
-            currency: 'IDR'
-          }).format(item.nominal);
+    // Event listener untuk input hasil roti
+    document.getElementById('hasil_roti').addEventListener('input', calculateDosAndSatuan);
 
-          // Memformat tanggal ke format tanggal bulan tahun
-          let tanggalKeluarFormatted = new Date(item.tanggal).toLocaleDateString('id-ID', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric'
-          });
+    // Panggil fungsi perhitungan pertama kali saat halaman dimuat (untuk value yang ada saat ini)
+    document.addEventListener('DOMContentLoaded', calculateDosAndSatuan);
 
-          // Membuat baris tabel dengan data yang diformat
-          let row = `
-                <tr>
-                    <td class="p-6 text-sm">${item.nama_produk}</td>
-                    <td class="p-6 text-sm">${item.nama_toko}</td>
-                    <td class="p-6 text-sm">${item.kemasan}</td>
-                    <td class="p-6 text-sm">${item.ukuran_stoples}</td>
-                    <td class="p-6 text-sm">${item.hasil_roti}</td>
-                    <td class="p-6 text-sm">${hargaKeluarFormatted}</td>
-                    <td class="p-6 text-sm">${tanggalKeluarFormatted}</td>
-                </tr>`;
-          tableBody.insertAdjacentHTML('beforeend', row); // Menambahkan baris baru ke tabel
-        });
-      })
-      .catch(error => {
-        console.error('Error fetching stock data:', error);
-      });
-  });
-</script>
+    function validateNumberInput(event) {
+      // Hanya izinkan angka dan tanda titik desimal
+      const input = event.target;
+      input.value = input.value.replace(/[^0-9.]/g, ''); // Hapus karakter selain angka dan titik
+    }
+  </script>
+
+</body>
+
+</html>

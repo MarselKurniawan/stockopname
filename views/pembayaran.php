@@ -13,6 +13,8 @@ error_log('Token yang dikirim: ' . $_SESSION['csrf_token']);
 include_once 'interface/header.php';
 ?>
 
+<!-- Container untuk menampilkan notifikasi -->
+<div id="notificationContainer" class="fixed top-4 z-[100] right-4 space-y-4"></div>
 
 <!-- Full-Screen Modal -->
 <div id="fullScreenModal"
@@ -121,15 +123,16 @@ include_once 'interface/header.php';
                         <span class="text-gray-500 text-sm">Bakkery & Cookies.</span>
                         <address class="not-italic text-sm text-gray-800">
                             DEP. KES. RI. P-IRT NO. 2053374020970-28<br>
-                            TELP (024) 8442782-8445719 SEMARANG<br>
-                            FAX. (024) 8442782<br>
+                            TELP (024) 8442782 SEMARANG<br>
+                            ADMIN. 0813-2533-6699<br>
                         </address>
                     </div>
                     <!-- Col -->
 
                     <div class="text-end">
-                        <h2 class="text-2xl md:text-3xl font-semibold text-gray-800">Invoice #</h2>
-                        <span class="mt-1 block text-gray-500 modal-title">3682303</span>
+                        <h2 class="text-2xl md:text-3xl font-semibold text-gray-800">Faktur Penjualan #</h2>
+                        <span class="mt-1 block text-gray-500 modal-diskon">Kepada Yth.</span>
+                        <span class="block text-gray-500 modal-toko"></span>
                     </div>
                     <!-- Col -->
                 </div>
@@ -138,8 +141,7 @@ include_once 'interface/header.php';
                 <!-- Grid -->
                 <div class="mt-8 grid sm:grid-cols-2 gap-3">
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-800">Bill to:</h3>
-                        <h3 class="text-lg font-semibold text-gray-800 modal-toko"></h3>
+                        <h3 class="text-sm font-semibold text-gray-800 modal-title"></h3>
                     </div>
                     <!-- Col -->
 
@@ -229,13 +231,28 @@ include_once 'interface/header.php';
                             <option selected>Select Pengiriman</option>
                         </select>
                     </div>
+                    <div class="filter-container flex flex-wrap gap-4 p-4 bg-white border rounded-lg shadow-sm">
+                        <!-- Filter Tanggal -->
+                        <div class="flex flex-col">
+                            <input type="date" id="filterDate"
+                                class="block w-full px-4 py-2 text-sm border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300" />
+                        </div>
+
+                        <!-- Search Input -->
+                        <div class="flex flex-col">
+                            <input type="text" id="searchInput" placeholder="Cari data..."
+                                class="block w-full px-4 py-2 text-sm border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300" />
+                        </div>
+                    </div>
 
                     <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
                         <!-- Grid -->
                         <div class="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6"
                             id="detailPengiriman">
 
+
                         </div>
+
                         <!-- End Grid -->
                     </div>
                 </div>
@@ -291,6 +308,13 @@ include_once 'interface/header.php';
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
+                                <th scope="col" class="ps-6 lg:ps-3 xl:ps-6 px-6 py-3 text-start">
+                                    <div class="flex items-center gap-x-2">
+                                        <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
+                                            ID Pengiriman
+                                        </span>
+                                    </div>
+                                </th>
                                 <th scope="col" class="ps-6 lg:ps-3 xl:ps-6 px-6 py-3 text-start">
                                     <div class="flex items-center gap-x-2">
                                         <span class="text-xs font-semibold uppercase tracking-wide text-gray-800">
@@ -401,8 +425,8 @@ include_once 'interface/header.php';
 <!-- End Table Section -->
 
 <!-- Modal Produk -->
-<div id="modalProduk" class="fixed inset-0 hidden z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
-    <div class="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
+<div id="modalProduk" class="fixed inset-0 hidden z-90 flex items-center justify-center bg-gray-800 bg-opacity-50">
+    <div class="w-full max-w-xl p-6 bg-white rounded-lg shadow-lg">
         <div class="flex items-center justify-between pb-4 border-b">
             <h2 class="text-lg font-bold">Detail Produk</h2>
             <button onclick="document.getElementById('modalProduk').classList.add('hidden')"
@@ -427,8 +451,8 @@ include_once 'interface/header.php';
 </div>
 
 <!-- Modal Retur -->
-<div id="modalRetur" class="fixed inset-0 hidden z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
-    <div class="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
+<div id="modalRetur" class="fixed inset-0 hidden z-90 flex items-center justify-center bg-gray-800 bg-opacity-50">
+    <div class="w-full max-w-xl p-6 bg-white rounded-lg shadow-lg">
         <div class="flex items-center justify-between pb-4 border-b">
             <h2 class="text-lg font-bold">Detail Retur</h2>
             <button onclick="document.getElementById('modalRetur').classList.add('hidden')"
@@ -499,7 +523,7 @@ include_once 'interface/header.php';
 
 
 
-    function showNotification(message) {
+    function showNotificatilon(message) {
         const notification = document.getElementById("notification");
         const notificationLabel = document.getElementById("hs-soft-color-success-label");
 
@@ -516,6 +540,8 @@ include_once 'interface/header.php';
     document.addEventListener("DOMContentLoaded", function () {
         const pengirimanSelect = document.getElementById("pengirimanSelect");
         const detailPengirimanDiv = document.getElementById("detailPengiriman");
+        const filterDateInput = document.getElementById("filterDate");
+        const searchInput = document.getElementById("searchInput");
 
         let pengirimanData = [];
         let groupedData = {};
@@ -528,17 +554,17 @@ include_once 'interface/header.php';
                 if (Array.isArray(data) && data.length > 0) {
                     pengirimanData = data;
 
-                    // Tambahkan log untuk data yang digroup
+                    // Group data by toko
                     groupedData = pengirimanData.reduce((acc, item) => {
-                        if (!acc[item.nama_toko]) {
-                            acc[item.nama_toko] = [];
+                        if (!acc[item.nama_kota]) {
+                            acc[item.nama_kota] = [];
                         }
-                        acc[item.nama_toko].push(item);
+                        acc[item.nama_kota].push(item);
                         return acc;
                     }, {});
 
-                    console.log("Grouped data:", groupedData);
 
+                    // Populate toko dropdown
                     Object.keys(groupedData).forEach(toko => {
                         let option = document.createElement("option");
                         option.value = toko;
@@ -548,22 +574,47 @@ include_once 'interface/header.php';
 
                     pengirimanSelect.addEventListener("change", function () {
                         const selectedToko = pengirimanSelect.value;
-                        console.log("Selected toko:", selectedToko);
                         const tokoData = groupedData[selectedToko];
                         if (tokoData) {
                             displayData(tokoData);
                         }
                     });
+
+                    // Event listener untuk filter
+                    filterDateInput.addEventListener("change", () => applyFilters());
+                    searchInput.addEventListener("input", () => applyFilters());
                 } else {
                     console.error("Invalid data format received from API.");
                 }
             })
             .catch(error => console.error("Error fetching pengiriman data:", error));
 
+        function applyFilters() {
+            const selectedToko = pengirimanSelect.value;
+            const filterDate = filterDateInput.value; // Format: YYYY-MM-DD
+            const searchQuery = searchInput.value.toLowerCase();
+
+            const tokoData = groupedData[selectedToko] || [];
+
+            // Filter data berdasarkan tanggal dan query search
+            const filteredData = tokoData.filter(item => {
+                const matchesDate = filterDate ? item.tanggal === filterDate : true;
+                const matchesSearch = searchQuery
+                    ? Object.values(item).some(value =>
+                        String(value).toLowerCase().includes(searchQuery)
+                    )
+                    : true;
+                return matchesDate && matchesSearch;
+            });
+
+            displayData(filteredData);
+        }
 
         function displayData(tokoData) {
             // Group data by date
             const groupedByDate = tokoData.reduce((acc, item) => {
+                const IDPengiriman = item.id_pengiriman;
+                const namaToko = item.nama_toko;
                 const dateKey = item.tanggal; // Use raw date as key
                 if (!acc[dateKey]) {
                     acc[dateKey] = [];
@@ -586,31 +637,41 @@ include_once 'interface/header.php';
 
                 const detailCard = document.createElement("div");
                 detailCard.innerHTML = `
-            <a class="group flex flex-col bg-white border shadow-sm rounded-xl hover:shadow-md focus:outline-none focus:shadow-md transition cursor-pointer"
-                data-date="${date}">
-                <div class="p-4 md:p-5">
-                    <div class="flex justify-between items-center gap-x-3">
-                        <div class="grow">
-                            <h3 class="group-hover:text-blue-600 font-semibold text-gray-800">
-                                ${formattedDate}
-                            </h3>
-                            <p class="text-sm text-gray-500">
-                                ${dateData.length} Produk
-                            </p>
-                        </div>
-                        <div>
-                            <svg class="shrink-0 size-5 text-gray-800"
-                                xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path d="m9 18 6-6-6-6" />
+                <a class="group flex flex-col bg-white border shadow-sm rounded-xl hover:shadow-md focus:outline-none focus:shadow-md transition cursor-pointer"
+                    data-date="${date}">
+                    <div class="p-4 md:p-5">
+                       ${dateData[0].status === 'done' ? `
+                        <span class="inline-flex items-center bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5 13l4 4L19 7"></path>
                             </svg>
+                            LUNAS
+                        </span>
+                    ` : ''}
+                        <div class="flex justify-between items-center gap-x-3">
+                            <div class="grow">
+                                <span class="">${dateData[0].nama_toko}</span>
+                                <hr>
+                                <span class="text-red-800">${dateData[0].id_pengiriman}</span>
+                                <h3 class="group-hover:text-blue-600 font-semibold text-gray-800">
+                                    ${formattedDate}
+                                </h3>
+                                <p class="text-sm text-gray-500">
+                                    ${dateData.length} Produk
+                                </p>
+                            </div>
+                            <div>
+                                <svg class="shrink-0 size-5 text-gray-800"
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m9 18 6-6-6-6" />
+                                </svg>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </a>
-        `;
-
+                </a>
+            `;
 
                 detailCard.querySelector("a").addEventListener("click", () => {
                     const idPengiriman = dateData.length > 0 ? dateData[0].id_pengiriman : null;
@@ -619,20 +680,16 @@ include_once 'interface/header.php';
                         localStorage.removeItem('id_pengiriman');  // Pastikan ID lama dihapus
                         localStorage.setItem('id_pengiriman', idPengiriman);
 
-
                         openModal(dateData, formattedDate);
-
                     } else {
                         console.log("ID Pengiriman tidak ditemukan dalam data");
                     }
                 });
 
-
                 // Append the detailCard to the container
                 detailPengirimanDiv.appendChild(detailCard);
             });
         }
-
         function openModal(data, formattedDate) {
             const modal = document.getElementById("contentToPrint");
             if (!modal) {
@@ -640,19 +697,25 @@ include_once 'interface/header.php';
                 return;
             }
 
-            const modalTitle = modal.querySelector(".modal-title");
             const modalContent = modal.querySelector(".modal-content");
             const modalTotal = modal.querySelector(".modal-total");
             const modalToko = modal.querySelector(".modal-toko");
             const modalTanggal = modal.querySelector(".modal-tanggal");
+            const modalDiskon = modal.querySelector(".modal-diskon");
 
-            modalTitle.innerHTML = `Detail Produk - ${formattedDate}`;
             modalContent.innerHTML = "";
             modalTotal.innerHTML = "";
             modalToko.innerHTML = "";
-            modalTanggal.innerHTML = "";
+            // modalTanggal.innerHTML = "";
 
             const idPengiriman = localStorage.getItem('id_pengiriman'); // ID pengiriman dari localStorage
+
+            // Fungsi untuk mengubah format tanggal
+
+
+            // Misalkan data yang diterima adalah dalam format YYYY-MM-DD
+
+
 
             fetch(`/stockopname/api/getRetur.php?id_pengiriman=${idPengiriman}`)
                 .then(response => response.json())
@@ -665,6 +728,10 @@ include_once 'interface/header.php';
                     const dataRetur = returData.data;
 
                     let totalKeseluruhan = data.reduce((sum, item) => sum + (item.harga * item.jumlah), 0);
+
+                    let discount = data.reduce((sum, item) => item.discount, 0);
+
+
 
                     let totalReturNominal = dataRetur.reduce((sum, item) => {
                         let returNominal = parseFloat(item.total_retur_nominal) || 0;
@@ -706,29 +773,34 @@ include_once 'interface/header.php';
                         if (data.length > 0) {
                             modalToko.innerHTML = data[0].nama_toko; // Hanya tampilkan nama toko yang pertama
                         }
-                        // Fungsi untuk mendapatkan tanggal sekarang dalam format 'DD MMMM YYYY'
-                        function getFormattedDate() {
-                            const today = new Date();
 
-                            // Array bulan dalam bahasa Indonesia
-                            const bulan = [
+                        function formatTanggal(dateString) {
+                            const months = [
                                 "Januari", "Februari", "Maret", "April", "Mei", "Juni",
                                 "Juli", "Agustus", "September", "Oktober", "November", "Desember"
                             ];
 
-                            const day = today.getDate(); // Mendapatkan tanggal
-                            const month = bulan[today.getMonth()]; // Mendapatkan nama bulan
-                            const year = today.getFullYear(); // Mendapatkan tahun
+                            const date = new Date(dateString); // Mengonversi string menjadi objek Date
+                            if (isNaN(date)) {
+                                return "Tanggal tidak valid";
+                            }
 
-                            // Formatkan tanggal menjadi 'DD MMMM YYYY'
-                            return `${day} ${month} ${year}`;
+                            const day = date.getDate(); // Mendapatkan hari
+                            const month = months[date.getMonth()]; // Mendapatkan bulan berdasarkan indeks
+                            const year = date.getFullYear(); // Mendapatkan tahun
+
+                            return `${day} ${month} ${year}`; // Format: 3 Januari 2025
                         }
 
-                        // Mendapatkan tanggal sekarang dalam format yang diinginkan
-                        const tanggalsekarang = getFormattedDate();
+                        // const modalTanggal = document.getElementById('modalTanggal'); // Pastikan elemen ditemukan
 
-                        // Menampilkan tanggal ke dalam elemen modal
-                        modalTanggal.innerHTML = tanggalsekarang;
+                        if (data.length > 0 && data[0].tgl_tagihan) {
+                            modalTanggal.innerHTML = formatTanggal(data[0].tgl_tagihan); // Format tanggal
+                        } else {
+                            modalTanggal.innerHTML = "Tanggal tidak tersedia";
+                        }
+
+
 
                         modalContent.innerHTML += `
                                             <div class="grid grid-cols-3 sm:grid-cols-5 gap-2 py-2">
@@ -821,6 +893,16 @@ include_once 'interface/header.php';
                         </div>
                     </dd>
                 </dl>
+                 <dl class="grid sm:grid-cols-5 gap-x-3">
+                    <dt class="col-span-3 font-medim text-sm text-gray-600">Diskon:</dt>
+                    <dd class="col-span-2 text-red-500">
+                        <div>
+                            <span class="text-gray-600 text-sm">
+                                ${discount}
+                            </span>
+                        </div>
+                    </dd>
+                </dl>
                 <dl class="grid sm:grid-cols-5 gap-x-3">
                     <dt class="col-span-3 font-medium text-gray-600 text-sm">Total Retur Nominal:</dt>
                     <dd class="col-span-2 text-red-500">
@@ -870,7 +952,7 @@ include_once 'interface/header.php';
         const idPengiriman = localStorage.getItem('id_pengiriman'); // Ambil ID pengiriman dari localStorage
 
         if (!idPengiriman) {
-            alert("ID pengiriman tidak ditemukan!");
+            showNotification('ID pengiriman tidak ditemukan!', 'error');
             return;
         }
 
@@ -888,19 +970,56 @@ include_once 'interface/header.php';
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    alert('Status berhasil diperbarui menjadi done!');
+                    showNotification('Status berhasil diperbarui menjadi done!', 'success');
                     // Lakukan sesuatu, misalnya menutup modal
-                    closeModal();
+
                 } else {
                     console.error('Gagal memperbarui status:', data.message);
-                    alert('Terjadi kesalahan saat memperbarui status.');
+                    showNotification('Terjadi kesalahan saat memperbarui status.', 'error');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Gagal mengirim data ke server.');
+                showNotification('Gagal mengirim data ke server.', 'error');
             });
     });
+
+    // Fungsi untuk menampilkan notifikasi
+    function showNotification(message, type) {
+        const notificationContainer = document.getElementById('notificationContainer');
+        const notification = document.createElement('div');
+
+        notification.classList.add('notification', 'p-4', 'rounded-lg', 'flex', 'items-center', 'space-x-2');
+
+        // Atur warna dan ikon berdasarkan tipe
+        if (type === 'success') {
+            notification.classList.add('bg-green-100', 'text-green-800');
+            notification.innerHTML = `
+            <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 12l2 2 4-4"></path>
+            </svg>
+            <span>${message}</span>
+        `;
+        } else {
+            notification.classList.add('bg-red-100', 'text-red-800');
+            notification.innerHTML = `
+            <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 9v6m0 0v3m0-3H9m3 0h3"></path>
+            </svg>
+            <span>${message}</span>
+        `;
+        }
+
+        // Set z-index dan tambahkan ke container
+        notification.style.zIndex = '100';
+        notificationContainer.appendChild(notification);
+
+        // Auto-remove notification after 5 seconds
+        setTimeout(() => {
+            location.reload();
+
+        }, 3000);
+    }
 
 
 
@@ -1138,19 +1257,56 @@ include_once 'interface/header.php';
                         year: 'numeric'
                     });
 
-                    // Format nama produk sebagai list
-                    let produkList = item.produk.map(prod => `
-                    <li>${prod.display_name} - ${prod.jumlah} pcs @ ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(prod.harga)}</li>
-                `).join('');
+                    // Format nama produk sebagai tabel
+                    let produkList = `
+    <table class="table-auto w-full border-collapse border border-gray-300 text-left text-sm">
+        <thead class="bg-gray-100">
+            <tr>
+                <th class="border border-gray-300 px-4 py-2">Nama Produk</th>
+                <th class="border border-gray-300 px-4 py-2">Pcs</th>
+                <th class="border border-gray-300 px-4 py-2">Harga / Pcs</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${item.produk.map(prod => `
+                <tr>
+                    <td class="border border-gray-300 px-4 py-2">${prod.display_name}</td>
+                    <td class="border border-gray-300 px-4 py-2">${prod.jumlah}</td>
+                    <td class="border border-gray-300 px-4 py-2">${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(prod.harga)}</td>
+                </tr>
+            `).join('')}
+        </tbody>
+    </table>`;
 
-                    // Format data retur sebagai list
-                    let returList = item.retur.length > 0 ? item.retur.map(retur => `
-                    <li>${retur.display_name} - ${retur.jumlah_retur} pcs, Total: ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(retur.total_retur_nominal)}</li>
-                `).join('') : '-';
+                    // Format data retur sebagai tabel
+                    let returList = `
+    <h3 class="font-semibold mb-2">Detail Retur:</h3>
+    ${item.retur.length > 0
+                            ? `<table class="table-auto w-full border-collapse border border-gray-300 text-left text-sm">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="border border-gray-300 px-4 py-2">Nama Produk</th>
+                    <th class="border border-gray-300 px-4 py-2">Pcs Retur</th>
+                    <th class="border border-gray-300 px-4 py-2">Total Retur</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${item.retur.map(retur => `
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">${retur.display_name}</td>
+                        <td class="border border-gray-300 px-4 py-2">${retur.jumlah_retur}</td>
+                        <td class="border border-gray-300 px-4 py-2">${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(retur.total_retur_nominal)}</td>
+                    </tr>
+                `).join('')}
+            </tbody>
+          </table>`
+                            : '<p>-</p>'}`;
+
 
                     // Membuat baris tabel
                     let row = `
                     <tr>
+                        <td class="p-4 text-sm">${item.id_pengiriman}</td>
                         <td class="p-4 text-sm">${item.nama_kota}</td>
                         <td class="p-4 text-sm">${item.nama_toko}</td>
                         <td class="p-4 text-sm">${tanggalFormatted}</td>
@@ -1159,6 +1315,15 @@ include_once 'interface/header.php';
                             ? '<span class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium border border-teal-500 text-teal-500">Sudah Terbayar</span>'
                             : '<span class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium border border-red-500 text-red-500">Belum Terbayar</span>'}
                         </td>
+                         <td class="p-4 text-center">
+                        <button class="btn-delete" data-id="${item.id_pengiriman}" title="Delete">
+
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-600 hover:text-red-800" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+  <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+</svg>
+
+                        </button>
+                    </td>
                         <td class="p-4 text-end">
                             <button class="btn-detail-produk py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border text-blue-600 hover:bg-blue-100" data-produk="${encodeURIComponent(produkList)}">
                                 Detail Produk
@@ -1169,6 +1334,57 @@ include_once 'interface/header.php';
                         </td>
                     </tr>`;
                     tableBody.insertAdjacentHTML('beforeend', row);
+
+                    // Tambahkan event listener pada semua tombol delete
+                    document.querySelectorAll('.btn-delete').forEach(btn => {
+                        btn.addEventListener('click', function () {
+                            // Ambil ID pengiriman dari atribut data-id
+                            const idPengiriman = this.getAttribute('data-id');
+
+                            // Periksa apakah ID pengiriman valid
+                            if (!idPengiriman) {
+                                alert('ID pengiriman tidak valid!');
+                                return;
+                            }
+
+                            // Konfirmasi sebelum menghapus
+                            if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                                // Kirim permintaan DELETE
+                                fetch(`/stockopname/api/deletePengiriman.php?id=${idPengiriman}&csrf_token=${csrfToken}`, {
+                                    method: 'DELETE',
+                                    body: new URLSearchParams({
+                                        id_pengiriman: idPengiriman
+                                    })
+                                })
+                                    .then(response => {
+                                        if (!response.ok) {
+                                            throw new Error(`Gagal menghapus data! Status: ${response.status}`);
+                                        }
+                                        return response.json();
+                                    })
+                                    .then(result => {
+                                        if (result.status === 'success') {
+                                            // Hapus baris dari DOM jika berhasil
+                                            const rowToDelete = document.getElementById(`row-${idPengiriman}`);
+                                            if (rowToDelete) {
+                                                rowToDelete.remove();
+                                            }
+                                            alert('Data berhasil dihapus!');
+
+                                            setTimeout(() => {
+                                                location.reload(); // Refresh halaman
+                                            }, 3000);
+                                        } else {
+                                            alert(result.message || 'Gagal menghapus data!');
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error deleting data:', error);
+                                        alert('Terjadi kesalahan saat menghapus data!');
+                                    });
+                            }
+                        });
+                    });
                 });
 
                 // Event listener untuk tombol detail produk
@@ -1192,6 +1408,7 @@ include_once 'interface/header.php';
             .catch(error => {
                 console.error('Error fetching stock data:', error);
             });
+
     });
 
 </script>
