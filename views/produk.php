@@ -77,6 +77,8 @@ if (isset($_GET['delete'])) {
 $conn = db_connect();
 $query = "SELECT * FROM produk";
 $products_result = mysqli_query($conn, $query);
+
+include_once 'interface/header.php';
 ?>
 
 <!DOCTYPE html>

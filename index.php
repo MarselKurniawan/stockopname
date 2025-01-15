@@ -35,7 +35,6 @@ elseif ($request == '' || $request == '/login') {
 } elseif ($request == '/pabrik') {
     require_once 'views/pabrik.php';
 } elseif (preg_match('/^\/pabrik(\?edit=\d+|\?delete=\d+)$/', $request, $matches)) {
-    // Handle the edit or delete logic
     require_once 'views/pabrik.php';  // This will include the pabrik.php page, with any query params
 } elseif ($request == '/bahan-baku') {
     require_once 'views/bahanbaku.php';
@@ -45,8 +44,10 @@ elseif ($request == '' || $request == '/login') {
     require_once 'views/pembukuan.php';
 } elseif ($request == '/toko') {
     require_once 'views/toko.php';
-} elseif ($request == '/catatan') {
-    require_once 'views/notes.php';
+}elseif (preg_match('/^\/toko(\?month=\d+|\?id=\d+|\?kota=\d+|\?action=\d+|\?nama_toko=\d+|\?id=\d+|\?delete=\d+)$/', $request, $matches)) {
+    require_once 'views/toko.php';
+} elseif ($request == '/gaji') {
+    require_once 'views/gaji.php';
 } else {
     http_response_code(404);
     echo "404 - Page Not Found";

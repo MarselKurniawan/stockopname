@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 06, 2025 at 07:32 PM
+-- Generation Time: Jan 15, 2025 at 07:50 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -117,6 +117,27 @@ INSERT INTO `customer` (`id`, `nama`, `kontak_customer`, `alamat_customer`, `ema
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `karyawan`
+--
+
+CREATE TABLE `karyawan` (
+  `id` int(11) NOT NULL,
+  `nama` varchar(100) NOT NULL,
+  `base_gaji` decimal(15,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `karyawan`
+--
+
+INSERT INTO `karyawan` (`id`, `nama`, `base_gaji`) VALUES
+(1, 'John Doe', 5000.00),
+(2, 'Jane Smith', 550000.00),
+(3, 'Robert Brown', 600000.00);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `kota`
 --
 
@@ -170,9 +191,8 @@ INSERT INTO `notes` (`id`, `page_title`, `content`, `created_at`) VALUES
 CREATE TABLE `pabrik` (
   `id_pabrik` int(11) NOT NULL,
   `produk_id` int(11) NOT NULL,
-  `toko_id` int(11) NOT NULL,
+  `toko_id` int(11) DEFAULT NULL,
   `hasil_roti` int(11) NOT NULL,
-  `nominal` decimal(10,2) NOT NULL,
   `tanggal` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -180,8 +200,9 @@ CREATE TABLE `pabrik` (
 -- Dumping data for table `pabrik`
 --
 
-INSERT INTO `pabrik` (`id_pabrik`, `produk_id`, `toko_id`, `hasil_roti`, `nominal`, `tanggal`) VALUES
-(2, 38, 2, 25, 250000.00, '2024-10-29');
+INSERT INTO `pabrik` (`id_pabrik`, `produk_id`, `toko_id`, `hasil_roti`, `tanggal`) VALUES
+(7, 57, NULL, 500, '2025-01-13'),
+(35, 22, NULL, 50, '2025-01-15');
 
 -- --------------------------------------------------------
 
@@ -208,12 +229,16 @@ CREATE TABLE `pengiriman` (
 --
 
 INSERT INTO `pengiriman` (`id`, `id_pengiriman`, `toko_id`, `produk_id`, `jumlah`, `harga`, `tanggal`, `tgl_tagihan`, `discount`, `status`, `created_at`) VALUES
-(42, 5342, 4, 20, 120, 51500.00, '2024-12-30', '2025-01-13', '5%', 'done', '2024-12-29 17:16:06'),
-(43, 9551, 7, 19, 50, 27500.00, '2025-01-04', '2025-01-18', '2.5%', 'done', '2025-01-04 09:35:35'),
-(44, 9551, 7, 26, 50, 76500.00, '2025-01-04', '2025-01-18', '2.5%', 'done', '2025-01-04 09:35:35'),
-(45, 8630, 7, 20, 10, 51500.00, '2025-01-07', '2025-01-21', '5%', 'done', '2025-01-06 17:08:47'),
-(46, 8630, 7, 19, 10, 26500.00, '2025-01-07', '2025-01-21', '5%', 'done', '2025-01-06 17:08:47'),
-(47, 8630, 7, 22, 10, 79000.00, '2025-01-07', '2025-01-21', '5%', 'done', '2025-01-06 17:08:47');
+(48, 2346, 5, 20, 50, 51500.00, '2025-01-10', '2025-01-24', '5%', 'done', '2025-01-09 17:27:20'),
+(49, 2346, 5, 22, 50, 79000.00, '2025-01-10', '2025-01-24', '5%', 'done', '2025-01-09 17:27:20'),
+(50, 2346, 5, 20, 50, 51500.00, '2025-01-10', '2025-01-24', '5%', 'done', '2025-01-09 17:27:20'),
+(51, 2340, 5, 20, 50, 51500.00, '2025-01-10', '2025-01-24', '5%', '', '2025-01-09 17:27:20'),
+(52, 1111, 5, 20, 50, 51500.00, '2025-01-10', '2025-01-24', '5%', '', '2025-01-09 17:27:20'),
+(53, 1, 5, 20, 50, 51500.00, '2025-01-10', '2025-01-24', '5%', '', '2025-01-09 17:27:20'),
+(54, 5132, 54, 21, 20, 47500.00, '2025-01-11', '2025-01-25', '10%', 'done', '2025-01-10 20:39:30'),
+(55, 2299, 54, 21, 20, 47500.00, '2025-01-11', '2025-01-25', '10%', '', '2025-01-10 20:39:39'),
+(57, 6971, 66, 21, 20, 45000.00, '2025-01-31', '2025-02-14', '5%', '', '2025-01-10 20:42:24'),
+(59, 6255, 76, 20, 20, 54000.00, '2025-04-26', '2025-05-10', '10%', '', '2025-01-10 20:43:28');
 
 -- --------------------------------------------------------
 
@@ -302,15 +327,11 @@ INSERT INTO `produk` (`id`, `nama_produk`, `kemasan`, `ukuran_stoples`, `ukuran_
 (49, 'Kue Tanduk ', 'stoples', 'Stoples Persegi', NULL, NULL, 36000.00, NULL, '2024-10-26 08:37:55'),
 (50, 'Kastengel', 'mika', NULL, '250 gram', NULL, 17500.00, NULL, '2024-10-26 08:44:13'),
 (51, 'Nastart Keranjang ', 'mika', NULL, '350 gram', NULL, 17500.00, NULL, '2024-10-26 08:44:13'),
-(52, 'Roti Cherry Keju', 'mika', NULL, '350 gram', NULL, NULL, NULL, '2024-10-26 08:44:13'),
-(53, 'Roti Coklat Manis', 'mika', NULL, '350 gram', NULL, NULL, NULL, '2024-10-26 08:44:13'),
 (54, 'Roti Salju', 'mika', NULL, '250 gram', NULL, 15500.00, NULL, '2024-10-26 08:44:13'),
-(55, 'Roti Gendu', 'mika', NULL, '250 gram', NULL, NULL, NULL, '2024-10-26 08:44:13'),
 (56, 'Roti Kacang', 'mika', NULL, '250 gram', NULL, 15500.00, NULL, '2024-10-26 08:44:13'),
 (57, 'Nastart', 'mika', NULL, '250 gram', NULL, 15500.00, NULL, '2024-10-26 08:44:13'),
 (58, 'Roti Valentine', 'mika', NULL, '350 gram', NULL, 16500.00, NULL, '2024-10-26 08:44:13'),
 (59, 'Roti Strawbery ', 'mika', NULL, '350 gram', NULL, 16500.00, NULL, '2024-10-26 08:44:13'),
-(60, 'Roti Coklat Kacang', 'mika', NULL, '250 gram', NULL, NULL, NULL, '2024-10-26 08:44:13'),
 (61, 'Roti Mente', 'mika', NULL, '350 gram', NULL, 17500.00, NULL, '2024-10-26 08:44:13'),
 (62, 'Roti Coklat Mente', 'mika', NULL, '350 gram', NULL, 17500.00, NULL, '2024-10-26 08:44:13'),
 (63, 'Assorted', 'mika', NULL, '350 gram', NULL, 17500.00, NULL, '2024-10-26 08:44:13');
@@ -349,19 +370,37 @@ CREATE TABLE `retur` (
 --
 
 INSERT INTO `retur` (`id`, `id_pengiriman`, `toko_id`, `produk_id`, `jumlah_retur`, `total_retur_nominal`, `customer_id`, `tanggal_retur`, `created_at`) VALUES
-(3, 0, 1, 52, 12, 0.00, 2, '2024-10-01', '2024-10-28 14:54:05'),
-(4, 112, 2, 21, 5, 215000.00, NULL, NULL, '2024-12-28 20:20:00'),
 (5, 4170, 3, 48, 12, 504000.00, NULL, NULL, '2024-12-28 20:20:31'),
 (6, 115, 3, 29, 2, 80000.00, NULL, NULL, '2024-12-28 20:26:21'),
 (7, 4170, 3, 20, 2, 98000.00, NULL, NULL, '2024-12-28 20:56:49'),
-(8, 5116, 2, 28, 20, 800000.00, NULL, NULL, '2024-12-28 21:30:10'),
-(9, 111, 1, 39, 32, 784000.00, NULL, NULL, '2024-12-28 21:30:46'),
 (10, 3513, 4, 22, 1, 79000.00, NULL, NULL, '2024-12-28 22:02:44'),
-(11, 9551, 7, 26, 10, 765000.00, NULL, NULL, '2025-01-05 18:31:34'),
-(12, 5342, 4, 20, 10, 490000.00, NULL, NULL, '2025-01-06 18:20:49'),
-(13, 8630, 7, 20, 5, 245000.00, NULL, NULL, '2025-01-06 18:21:36'),
-(14, 8630, 7, 19, 5, 132500.00, NULL, NULL, '2025-01-06 18:21:36'),
-(15, 8630, 7, 22, 5, 395000.00, NULL, NULL, '2025-01-06 18:21:37');
+(16, 2346, 5, 22, 150, 11850000.00, NULL, NULL, '2025-01-10 18:00:26'),
+(17, 2346, 5, 20, 20, 980000.00, NULL, NULL, '2025-01-15 18:38:24');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `slip_gaji`
+--
+
+CREATE TABLE `slip_gaji` (
+  `id` int(11) NOT NULL,
+  `nama` varchar(100) NOT NULL,
+  `absensi` int(11) NOT NULL,
+  `nominal` decimal(15,2) NOT NULL,
+  `tambahan` decimal(15,2) DEFAULT 0.00,
+  `potongan` decimal(15,2) DEFAULT 0.00,
+  `total` decimal(15,2) NOT NULL,
+  `tanggal` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `slip_gaji`
+--
+
+INSERT INTO `slip_gaji` (`id`, `nama`, `absensi`, `nominal`, `tambahan`, `potongan`, `total`, `tanggal`) VALUES
+(31, 'Jane Smith', 10, 550000.00, 0.00, 0.00, 5500000.00, '2025-01-16'),
+(32, 'Robert Brown', 10, 600000.00, 0.00, 0.00, 6000000.00, '2025-01-16');
 
 -- --------------------------------------------------------
 
@@ -447,10 +486,8 @@ CREATE TABLE `toko` (
 --
 
 INSERT INTO `toko` (`id`, `nama_toko`, `alamat_toko`, `telepon`, `kota_id`, `created_at`) VALUES
-(1, 'Gaia Sendangguwo', 'Alamat Toko A1', '081234567892', 1, '2024-10-20 07:06:45'),
-(2, 'Aneka Jaya Sambiroto', 'Alamat Toko B1', '081234567893', 2, '2024-10-20 07:06:45'),
 (3, 'Glie Mart', 'Jl Loksuemawue Dalam Raya', '084859695954', NULL, '2024-11-01 20:27:41'),
-(4, 'Toko Andania Rosmala', 'JL. Rono Asmoro', '083847956849', 1, '2024-12-24 04:10:15'),
+(4, 'Toko Andania Rosmala 1', 'JL. Rono Asmoro', '083847956849', 2, '2024-12-24 04:10:15'),
 (5, 'LUWES SALATIGA TOKO', NULL, NULL, 4, '2025-01-04 09:18:55'),
 (6, 'LUWES SALATIGA BASAH', NULL, NULL, 4, '2025-01-04 09:18:55'),
 (7, 'NIKI BARU', NULL, NULL, 4, '2025-01-04 09:18:55'),
@@ -517,12 +554,26 @@ INSERT INTO `toko` (`id`, `nama_toko`, `alamat_toko`, `telepon`, `kota_id`, `cre
 (68, 'TRIO MAGELANG', NULL, NULL, 5, '2025-01-04 09:21:45'),
 (69, 'LARIS MUNTILAN', NULL, NULL, 5, '2025-01-04 09:21:45'),
 (70, 'TOSERBA', NULL, NULL, 5, '2025-01-04 09:21:45'),
-(71, 'IUNDOWARUNG', NULL, NULL, 5, '2025-01-04 09:21:45'),
+(71, 'INDOWARUNG', NULL, NULL, 2, '2025-01-04 09:21:45'),
 (72, 'WASERDA', NULL, NULL, 5, '2025-01-04 09:21:45'),
 (73, 'INDOTOKO', NULL, NULL, 5, '2025-01-04 09:21:45'),
 (74, 'INDOASRI', NULL, NULL, 5, '2025-01-04 09:21:45'),
 (75, 'SIDOADI', NULL, NULL, 5, '2025-01-04 09:21:45'),
-(76, 'INDOKULAK', NULL, NULL, 5, '2025-01-04 09:21:45');
+(76, 'INDOKULAK', NULL, NULL, 5, '2025-01-04 09:21:45'),
+(77, 'ANEKA JAYA SSS', NULL, NULL, 1, '2025-01-10 23:54:09'),
+(84, 'contoh', NULL, NULL, 1, '2025-01-15 15:30:34'),
+(85, 'halo cek', NULL, NULL, 1, '2025-01-15 15:36:24'),
+(86, 'alsd', NULL, NULL, 1, '2025-01-15 16:23:35'),
+(87, 'asldlasdas', NULL, NULL, 1, '2025-01-15 16:26:36'),
+(88, 'Joko', NULL, NULL, 1, '2025-01-15 16:30:59'),
+(89, 'LALALALA', NULL, NULL, 1, '2025-01-15 16:32:33'),
+(90, 'Lakon', NULL, NULL, 1, '2025-01-15 16:34:28'),
+(91, 'aduhaii', NULL, NULL, 1, '2025-01-15 16:50:01'),
+(95, 'Komol', NULL, NULL, 1, '2025-01-15 17:26:57'),
+(96, 'Komol', NULL, NULL, 1, '2025-01-15 17:26:58'),
+(97, 'jokaaaa', NULL, NULL, 1, '2025-01-15 18:04:40'),
+(98, 'kdfsajdkad', NULL, NULL, 1, '2025-01-15 18:05:37'),
+(99, 'asdasda', NULL, NULL, 1, '2025-01-15 18:06:39');
 
 -- --------------------------------------------------------
 
@@ -533,7 +584,7 @@ INSERT INTO `toko` (`id`, `nama_toko`, `alamat_toko`, `telepon`, `kota_id`, `cre
 CREATE TABLE `transactions` (
   `id` int(11) NOT NULL,
   `transaction_date` date NOT NULL,
-  `description` varchar(255) NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
   `masuk` decimal(10,2) DEFAULT 0.00,
   `keluar` decimal(10,2) DEFAULT 0.00,
   `total` decimal(10,2) DEFAULT 0.00
@@ -603,6 +654,12 @@ ALTER TABLE `customer`
   ADD KEY `kota_id` (`kota_id`);
 
 --
+-- Indexes for table `karyawan`
+--
+ALTER TABLE `karyawan`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `kota`
 --
 ALTER TABLE `kota`
@@ -666,6 +723,12 @@ ALTER TABLE `retur`
   ADD KEY `toko_id` (`toko_id`),
   ADD KEY `produk_id` (`produk_id`),
   ADD KEY `customer_id` (`customer_id`);
+
+--
+-- Indexes for table `slip_gaji`
+--
+ALTER TABLE `slip_gaji`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `stock`
@@ -733,6 +796,12 @@ ALTER TABLE `customer`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
+-- AUTO_INCREMENT for table `karyawan`
+--
+ALTER TABLE `karyawan`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT for table `kota`
 --
 ALTER TABLE `kota`
@@ -748,13 +817,13 @@ ALTER TABLE `notes`
 -- AUTO_INCREMENT for table `pabrik`
 --
 ALTER TABLE `pabrik`
-  MODIFY `id_pabrik` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_pabrik` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT for table `pengiriman`
 --
 ALTER TABLE `pengiriman`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
 
 --
 -- AUTO_INCREMENT for table `penitipan_nota`
@@ -784,7 +853,13 @@ ALTER TABLE `provinsi`
 -- AUTO_INCREMENT for table `retur`
 --
 ALTER TABLE `retur`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+
+--
+-- AUTO_INCREMENT for table `slip_gaji`
+--
+ALTER TABLE `slip_gaji`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `stock`
@@ -808,13 +883,13 @@ ALTER TABLE `stok_masuk`
 -- AUTO_INCREMENT for table `toko`
 --
 ALTER TABLE `toko`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=100;
 
 --
 -- AUTO_INCREMENT for table `transactions`
 --
 ALTER TABLE `transactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `transaksi`

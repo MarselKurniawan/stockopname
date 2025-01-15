@@ -1196,6 +1196,7 @@ include_once 'interface/header.php';
             .then(data => {
                 console.log('Data saved successfully:', data);
                 // Handle success (e.g., show a success message or redirect)
+                window.location.reload();
             })
             .catch(error => {
                 console.error('Error saving data:', error);

@@ -249,6 +249,9 @@ $db->close();
             editNotification.classList.add('hidden');
             cancelEditButton.classList.add('hidden');
         });
+
+
+        
     </script>
 </body>
 
